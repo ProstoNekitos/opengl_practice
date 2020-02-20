@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/untitled.dir/main.cpp.o  -o untitled ../lib/libGLEW.a ../lib/libglfw3.a 
+/usr/bin/c++  -g   CMakeFiles/untitled.dir/main.cpp.o CMakeFiles/untitled.dir/src/glad.c.o  -o untitled  -L/usr/lib/gcc/x86_64-linux-gnu/8 ../lib/libGLEW.a ../lib/libglfw3.a -ldl -lgtest -pthread 

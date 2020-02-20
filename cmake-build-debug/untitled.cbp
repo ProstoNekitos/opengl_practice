@@ -93,6 +93,9 @@
 		<Unit filename="/home/nolv/Workspace/untitled/main.cpp">
 			<Option target="untitled"/>
 		</Unit>
+		<Unit filename="/home/nolv/Workspace/untitled/src/glad.c">
+			<Option target="untitled"/>
+		</Unit>
 		<Unit filename="/home/nolv/Workspace/untitled/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
