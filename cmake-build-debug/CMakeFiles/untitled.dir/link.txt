@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/untitled.dir/main.cpp.o  -o untitled  -L/home/nolv/Workspace/untitled/include -Wl,-rpath,/home/nolv/Workspace/untitled/include -lGLEW -lGLFW 
+/usr/bin/c++  -g   CMakeFiles/untitled.dir/main.cpp.o  -o untitled ../lib/libGLEW.a ../lib/libglfw3.a 

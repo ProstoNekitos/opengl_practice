@@ -3,10 +3,14 @@ project(untitled)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_library(GLEW lib/libGLEW.a REQUIRED)
-find_library(GLFW lib/libglfw3.a REQUIRED)
+include_directories(include)
 
-link_directories(include)
-link_libraries(GLEW GLFW)
+find_library(GLEW
+        NAMES libGLEW.a
+        HINTS lib)
+find_library(GLFW
+        NAMES libglfw3.a
+        HINTS lib)
 
 add_executable(${PROJECT_NAME} main.cpp)
+target_link_libraries(${PROJECT_NAME} ${GLEW} ${GLFW})
