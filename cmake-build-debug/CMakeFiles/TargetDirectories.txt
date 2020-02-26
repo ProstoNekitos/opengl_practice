@@ -1,3 +1,0 @@
-/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles/untitled.dir
-/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles/edit_cache.dir

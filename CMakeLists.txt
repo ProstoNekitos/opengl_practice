@@ -15,5 +15,5 @@ find_library(GLFW
         NAMES libglfw3.a
         HINTS lib)
 
-add_executable(${PROJECT_NAME} main.cpp ${SRC})
+add_executable(${PROJECT_NAME} main.cpp ${SRC} include/Shader.h include/stb_image.h src/stb_image.cpp)
 target_link_libraries(${PROJECT_NAME} ${GLEW} ${GLFW} -ldl -lgtest -pthread)
