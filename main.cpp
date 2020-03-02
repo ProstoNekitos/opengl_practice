@@ -235,7 +235,7 @@ int main()
 
     std::vector<std::string> faces
     {
-            "../resources/rainbow_lf.png",
+        "../resources/rainbow_lf.png",
         "../resources/rainbow_rt.png",
 
         "../resources/rainbow_up.png",
@@ -247,6 +247,9 @@ int main()
 
     unsigned int cubemapTexture;
     cubemapTexture = loadCubemap(faces);
+
+    lightingShader.use();
+    lightingShader.setInt("skybox", 0);
 
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);

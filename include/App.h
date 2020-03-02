@@ -8,7 +8,11 @@
 
 class Window
 {
+    void init(int major, int minor);
 
+    void setMouseCallback();
+    void setScrollCallback();
+    void setFBCallback();
 };
 
 #endif //UNTITLED_APP_H
