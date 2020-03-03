@@ -10,6 +10,7 @@ CMakeFiles/untitled.dir/main.cpp.o: ../include/GLFW/glfw3.h
 CMakeFiles/untitled.dir/main.cpp.o: ../include/KHR/khrplatform.h
 CMakeFiles/untitled.dir/main.cpp.o: ../include/Shader.h
 CMakeFiles/untitled.dir/main.cpp.o: ../include/Skybox.h
+CMakeFiles/untitled.dir/main.cpp.o: ../include/Window.h
 CMakeFiles/untitled.dir/main.cpp.o: ../include/glad/glad.h
 CMakeFiles/untitled.dir/main.cpp.o: ../include/glm/common.hpp
 CMakeFiles/untitled.dir/main.cpp.o: ../include/glm/detail/_fixes.hpp

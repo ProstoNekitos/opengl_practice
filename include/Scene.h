@@ -6,6 +6,9 @@
 
 #include "Skybox.h"
 
+/**
+ * 2lazy2implement right now
+ */
 class Scene
 {
     Scene();

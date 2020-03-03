@@ -106,6 +106,24 @@ Shader.h
 Camera.h
 ../include/Camera.h
 
+../include/Window.h
+glad/glad.h
+-
+GLFW/glfw3.h
+-
+stb_image.h
+-
+glm/glm.hpp
+-
+glm/gtc/matrix_transform.hpp
+-
+glm/gtc/type_ptr.hpp
+-
+stdexcept
+-
+Camera.h
+-
+
 ../include/glad/glad.h
 KHR/khrplatform.h
 -
@@ -1531,16 +1549,14 @@ glm/glm.hpp
 -
 glm/gtc/matrix_transform.hpp
 -
-glm/gtc/type_ptr.hpp
--
 Shader.h
--
+/home/nolv/Workspace/scene/Shader.h
 Camera.h
--
+/home/nolv/Workspace/scene/Camera.h
 Skybox.h
 /home/nolv/Workspace/scene/Skybox.h
+Window.h
+/home/nolv/Workspace/scene/Window.h
 iostream
--
-stdexcept
 -
 
