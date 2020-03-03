@@ -46,18 +46,25 @@ public:
 
         for(unsigned int i = 0; i < vertices.size() - sectorCount; ++i )
         {
-            unsigned int lvlDelim = (i / sectorCount + 1) * sectorCount;
+            unsigned int lvl = (i / sectorCount + 1);
+            unsigned int lvlDelim = lvl * sectorCount;
+            unsigned int diagonalToI = i + sectorCount + 1;
+
+            if( diagonalToI == lvlDelim + sectorCount ) ///< Case between lvls
+                diagonalToI -= sectorCount; ///<FUCK THIS AS WELL
+
             unsigned int buffIndicies[6] = {
-                    i, i+sectorCount, (i+1) % lvlDelim + sectorCount, ///< fuck this btw
-                    i, (i+1) % lvlDelim + sectorCount, (i+1) % lvlDelim
+                    i, diagonalToI, i+sectorCount, ///< fuck this btw
+                    i, diagonalToI, (i+1) % lvlDelim
             };
             indices.insert(indices.end(), buffIndicies, buffIndicies + 6);
+            std::cout << "a";
         }
 
         return std::move( Mesh(vertices, indices, std::vector<Texture>( loadTexture( texturePath.c_str() ) )) );
     }
 
-    std::map<float, float> heightRadMap = {{1,1},{.5,1}, {.45,.1}};
+    std::map<float, float> heightRadMap = {{1,1},{.5,.5}, {.25,.5}};
 
 };
 
