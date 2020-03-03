@@ -101,6 +101,9 @@
 		<Unit filename="/home/nolv/Workspace/scene/include/Skybox.h">
 			<Option target="untitled"/>
 		</Unit>
+		<Unit filename="/home/nolv/Workspace/scene/include/Tower.h">
+			<Option target="untitled"/>
+		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/include/Window.h">
 			<Option target="untitled"/>
 		</Unit>

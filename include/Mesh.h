@@ -40,11 +40,11 @@ public:
     vector<Texture> textures;
     unsigned int VAO;
 
-    Mesh(const vector<Vertex>& v, const vector<unsigned int>& i, const vector<Texture>& t)
+    Mesh(const vector<Vertex>& vert, const vector<unsigned int>& ind, const vector<Texture>& tex)
     {
-        this->vertices = v;
-        this->indices = i;
-        this->textures = t;
+        vertices = vert;
+        indices = ind;
+        textures = tex;
         setup();
     }
 
@@ -93,6 +93,7 @@ public:
     void terminate(){
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
+        glDeleteBuffers(1, &EBO);
     }
 
 private:
@@ -131,4 +132,3 @@ private:
     }
 };
 #endif
-

@@ -65,10 +65,10 @@ public:
         };
 
         textureID = loadCubemap(paths);
-        glGenBuffers(1, &skyboxVBO);
-        glGenVertexArrays(1, &skyboxVAO);
-        glBindVertexArray(skyboxVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+        glGenBuffers(1, &VBO);
+        glGenVertexArrays(1, &VAO);
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -116,23 +116,23 @@ public:
         glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
-        // skybox cube
-        glBindVertexArray(skyboxVAO);
+
+        glBindVertexArray(VAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
-        glDepthFunc(GL_LESS); // set depth function back to default
+        glDepthFunc(GL_LESS);
     }
 
     void terminate()
     {
-        glDeleteVertexArrays(1, &skyboxVAO);
-        glDeleteBuffers(1, &skyboxVBO);
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &VBO);
     }
 
     unsigned int textureID;
-    unsigned int skyboxVAO, skyboxVBO;
+    unsigned int VAO, VBO;
 };
 
 #endif //UNTITLED_SKYBOX_H

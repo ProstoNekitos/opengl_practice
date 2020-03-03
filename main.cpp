@@ -1,5 +1,3 @@
-
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
@@ -7,10 +5,15 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <cmath>
+
 #include "Shader.h"
 #include "Camera.h"
 #include "Skybox.h"
 #include "Window.h"
+#include "Mesh.h"
+
+#include "Tower.h"
 
 #include <iostream>
 
@@ -29,6 +32,8 @@ double lastFrame = 0.0f;
 
 int main()
 {
+    Tower t;
+    t.buildVerticesSmooth(4);
     Window window(3,3);
     window.setCamera(&camera);
     Window::initGlad();
