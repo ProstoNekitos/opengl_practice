@@ -1,12 +1,20 @@
 #ifndef UNTITLED_SCENE_H
 #define UNTITLED_SCENE_H
 
+#include <vector>
+#include "Mesh.h"
+
+#include "Skybox.h"
+
 class Scene
 {
     Scene();
 
-    void addObject();
-    void render();
+    virtual void addObject();
+    virtual void render();
+
+    std::vector<Mesh> meshes;
+    Skybox skybox;
 };
 
 #endif //UNTITLED_SCENE_H

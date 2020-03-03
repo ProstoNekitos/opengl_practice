@@ -90,6 +90,11 @@ public:
         glActiveTexture(GL_TEXTURE0);
     }
 
+    void terminate(){
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &VBO);
+    }
+
 private:
     unsigned int VBO, EBO;
 
