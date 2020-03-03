@@ -10,6 +10,7 @@
 
 #include <Shader.h>
 #include <Camera.h>
+#include "Skybox.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -77,51 +78,6 @@ int main()
     Shader lightingShader("../shaders/color.vert", "../shaders/color.frag");
     Shader lampShader("../shaders/lamp.vert", "../shaders/lamp.frag");
     Shader skyboxShader("../shaders/skybox.vert", "../shaders/skybox.frag");
-
-    float skyboxVertices[] = {
-            // positions
-            -1.0f,  1.0f, -1.0f,
-            -1.0f, -1.0f, -1.0f,
-            1.0f, -1.0f, -1.0f,
-            1.0f, -1.0f, -1.0f,
-            1.0f,  1.0f, -1.0f,
-            -1.0f,  1.0f, -1.0f,
-
-            -1.0f, -1.0f,  1.0f,
-            -1.0f, -1.0f, -1.0f,
-            -1.0f,  1.0f, -1.0f,
-            -1.0f,  1.0f, -1.0f,
-            -1.0f,  1.0f,  1.0f,
-            -1.0f, -1.0f,  1.0f,
-
-            1.0f, -1.0f, -1.0f,
-            1.0f, -1.0f,  1.0f,
-            1.0f,  1.0f,  1.0f,
-            1.0f,  1.0f,  1.0f,
-            1.0f,  1.0f, -1.0f,
-            1.0f, -1.0f, -1.0f,
-
-            -1.0f, -1.0f,  1.0f,
-            -1.0f,  1.0f,  1.0f,
-            1.0f,  1.0f,  1.0f,
-            1.0f,  1.0f,  1.0f,
-            1.0f, -1.0f,  1.0f,
-            -1.0f, -1.0f,  1.0f,
-
-            -1.0f,  1.0f, -1.0f,
-            1.0f,  1.0f, -1.0f,
-            1.0f,  1.0f,  1.0f,
-            1.0f,  1.0f,  1.0f,
-            -1.0f,  1.0f,  1.0f,
-            -1.0f,  1.0f, -1.0f,
-
-            -1.0f, -1.0f, -1.0f,
-            -1.0f, -1.0f,  1.0f,
-            1.0f, -1.0f, -1.0f,
-            1.0f, -1.0f, -1.0f,
-            -1.0f, -1.0f,  1.0f,
-            1.0f, -1.0f,  1.0f
-    };
 
     float vertices[] = {
             // positions          // normals           // texture coords
@@ -209,7 +165,6 @@ int main()
     unsigned int diffuseMap = loadTexture("../container2.png");
     unsigned int specularMap = loadTexture("../container2_specular.png");
 
-
     // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
     unsigned int lightVAO;
     glGenVertexArrays(1, &lightVAO);
@@ -223,33 +178,16 @@ int main()
     lightingShader.setInt("material.diffuse", 0);
     lightingShader.setInt("material.specular", 1);
 
-    unsigned int skyboxVAO;
-    unsigned int skyboxVBO;
-    glGenBuffers(1, &skyboxVBO);
-    glGenVertexArrays(1, &skyboxVAO);
-    glBindVertexArray(skyboxVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    Skybox skybox({
+                          "../resources/rainbow_lf.png",
+                          "../resources/rainbow_rt.png",
 
-    std::vector<std::string> faces
-    {
-        "../resources/rainbow_lf.png",
-        "../resources/rainbow_rt.png",
+                          "../resources/rainbow_up.png",
+                          "../resources/rainbow_dn.png",
 
-        "../resources/rainbow_up.png",
-        "../resources/rainbow_dn.png",
-
-        "../resources/rainbow_ft.png",
-        "../resources/rainbow_bk.png"
-    };
-
-    unsigned int cubemapTexture;
-    cubemapTexture = loadCubemap(faces);
-
-    lightingShader.use();
-    lightingShader.setInt("skybox", 0);
+                          "../resources/rainbow_ft.png",
+                          "../resources/rainbow_bk.png"
+    });
 
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
@@ -382,13 +320,8 @@ int main()
         view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
         skyboxShader.setMat4("view", view);
         skyboxShader.setMat4("projection", projection);
-        // skybox cube
-        glBindVertexArray(skyboxVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glBindVertexArray(0);
-        glDepthFunc(GL_LESS); // set depth function back to default
+
+        skybox.render(skyboxShader, camera, projection);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -396,7 +329,7 @@ int main()
 
     glDeleteVertexArrays(1, &cubeVAO);
     glDeleteVertexArrays(1, &lightVAO);
-    glDeleteVertexArrays(1, &skyboxVAO);
+    skybox.terminate();
     glDeleteBuffers(1, &VBO);
 
     glfwTerminate();

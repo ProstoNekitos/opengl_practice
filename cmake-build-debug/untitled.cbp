@@ -86,9 +86,6 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/nolv/Workspace/scene/include/App.h">
-			<Option target="untitled"/>
-		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/include/Camera.h">
 			<Option target="untitled"/>
 		</Unit>
@@ -102,6 +99,9 @@
 			<Option target="untitled"/>
 		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/include/Skybox.h">
+			<Option target="untitled"/>
+		</Unit>
+		<Unit filename="/home/nolv/Workspace/scene/include/Window.h">
 			<Option target="untitled"/>
 		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/include/stb_image.h">

@@ -17,8 +17,9 @@
 #include "Camera.h"
 
 class Skybox{
-    explicit Skybox(const std::vector<std::string>& paths){
+public:
 
+    explicit Skybox(const std::vector<std::string>& paths){
         float skyboxVertices[] = {
                 -1.0f,  1.0f, -1.0f,
                 -1.0f, -1.0f, -1.0f,
@@ -71,7 +72,6 @@ class Skybox{
         glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
     }
 
     unsigned int loadCubemap(std::vector<std::string> faces)
@@ -105,7 +105,6 @@ class Skybox{
 
         return textureID;
     }
-
 
     void render(Shader shader, Camera camera, glm::mat4 projection)
     {

@@ -1,5 +1,5 @@
-#ifndef UNTITLED_APP_H
-#define UNTITLED_APP_H
+#ifndef UNTITLED_WINDOW_H
+#define UNTITLED_WINDOW_H
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -15,4 +15,4 @@ class Window
     void setFBCallback();
 };
 
-#endif //UNTITLED_APP_H
+#endif //UNTITLED_WINDOW_H
