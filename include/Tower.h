@@ -7,16 +7,16 @@
 
 #include <Mesh.h>
 
-class Tower{
+class Tower
+{
 public:
-
-    static std::vector<glm::vec3> generateSurface(size_t sectorCount)
+    std::vector<glm::vec3> generateSurface(size_t sectorCount)
     {
         float sectorStep = 2.0f * M_PI / sectorCount;
         float sectorAngle;  // radian
 
         std::vector<glm::vec3> vert;
-        for(int i = 0; i <= sectorCount; ++i)
+        for(int i = 0; i < sectorCount; ++i)
         {
             sectorAngle = i * sectorStep;
             vert.emplace_back(cos(sectorAngle), sin(sectorAngle), 0);
@@ -24,7 +24,7 @@ public:
         return vert;
     }
 
-    void buildVerticesSmooth(unsigned int sectorCount)
+    Mesh buildVerticesSmooth(unsigned int sectorCount, const std::string& texturePath)
     {
         std::vector<glm::vec3> unitVertices = generateSurface(sectorCount);
         glm::vec3 translationMat(1);
@@ -52,12 +52,12 @@ public:
                     i, (i+1) % lvlDelim + sectorCount, (i+1) % lvlDelim
             };
             indices.insert(indices.end(), buffIndicies, buffIndicies + 6);
-            std::cout << "asd";
         }
 
+        return std::move( Mesh(vertices, indices, std::vector<Texture>( loadTexture( texturePath.c_str() ) )) );
     }
 
-    std::map<float, float> heightRadMap = {{3,5},{1,1}, {2,2}};
+    std::map<float, float> heightRadMap = {{1,1},{.5,1}, {.45,.1}};
 
 };
 

@@ -21,7 +21,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
-unsigned int loadTexture(const char *path);
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -32,11 +31,15 @@ double lastFrame = 0.0f;
 
 int main()
 {
-    Tower t;
-    t.buildVerticesSmooth(4);
     Window window(3,3);
     window.setCamera(&camera);
     Window::initGlad();
+
+    Tower t;
+    Mesh tower = t.buildVerticesSmooth(4, "../container2.png");
+    glm::vec3 towerPosition(1.1, 0, 2);
+
+    Shader towerShader("../shaders/tower.vert","../shaders/tower.frag");
 
     window.setMouseCallback(mouse_callback);
     window.setFBCallback(framebuffer_size_callback);
@@ -44,8 +47,8 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    Shader lightingShader("../shaders/color.vert", "../shaders/color.frag");
-    Shader lampShader("../shaders/lamp.vert", "../shaders/lamp.frag");
+    Shader lightingShader("../shaders/box.vert", "../shaders/box.frag");
+    Shader lampShader("../shaders/lamp.vert", "../shaders/lam.frag");
     Shader skyboxShader("../shaders/skybox.vert", "../shaders/skybox.frag");
 
     float vertices[] = {
@@ -275,6 +278,14 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
+        glm::mat4 buffModel = glm::mat4(1.0f);
+        buffModel = glm::translate(buffModel, towerPosition);
+        towerShader.setMat4("model", buffModel);
+        towerShader.setMat4("projection", projection);
+        towerShader.setMat4("view", view);
+        tower.render(towerShader);
+
+
         skybox.render(skyboxShader, camera, projection);
 
         glfwSwapBuffers(window.window);
@@ -338,43 +349,3 @@ void scroll_callback(GLFWwindow*, double, double yoffset)
     camera.ProcessMouseScroll(yoffset);
 }
 
-unsigned int loadTexture(char const * path)
-{
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
-
-    int width, height, nrComponents;
-    unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
-    if (data)
-    {
-        GLenum format = GL_RGB;
-        switch (nrComponents){
-            case 1:
-                format = GL_RED;
-            case 3:
-                format = GL_RGB;
-            case 4:
-                format = GL_RGBA;
-            default:
-                break;
-        }
-
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_image_free(data);
-    }
-    else
-    {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
-        stbi_image_free(data);
-    }
-
-    return textureID;
-}
