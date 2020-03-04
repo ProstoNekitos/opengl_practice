@@ -1,5 +1,5 @@
-#ifndef UNTITLED_SKYBOX_H
-#define UNTITLED_SKYBOX_H
+#ifndef UNTITLED_CUBEMESH_H
+#define UNTITLED_CUBEMESH_H
 
 #include <vector>
 #include <string>
@@ -16,10 +16,12 @@
 #include "Shader.h"
 #include "Camera.h"
 
-class Skybox{
+class cubeMesh
+{
 public:
 
-    explicit Skybox(const std::vector<std::string>& paths){
+    explicit cubeMesh(const std::vector<std::string>& paths)
+    {
         float skyboxVertices[] = {
                 -1.0f,  1.0f, -1.0f,
                 -1.0f, -1.0f, -1.0f,
@@ -97,6 +99,7 @@ public:
                 stbi_image_free(data);
             }
         }
+
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -106,17 +109,8 @@ public:
         return textureID;
     }
 
-    void render(Shader shader, Camera camera, glm::mat4 projection)
+    void render(Camera camera, glm::mat4 projection)
     {
-        shader.use();
-        shader.setInt("skybox", 0);
-
-        glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-        shader.use();
-        glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
-        shader.setMat4("view", view);
-        shader.setMat4("projection", projection);
-
         glBindVertexArray(VAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
@@ -135,4 +129,4 @@ public:
     unsigned int VAO, VBO;
 };
 
-#endif //UNTITLED_SKYBOX_H
+#endif //UNTITLED_CUBEMESH_H

@@ -9,7 +9,7 @@
 
 #include "Shader.h"
 #include "Camera.h"
-#include "Skybox.h"
+#include "cubeMesh.h"
 #include "Window.h"
 #include "Mesh.h"
 
@@ -36,7 +36,7 @@ int main()
     Window::initGlad();
 
     Tower t;
-    Mesh tower = t.buildVerticesSmooth(4, "../container2.png");
+    Mesh tower = t.buildVerticesSmooth(40, "../resources/container2.png");
     glm::vec3 towerPosition(1.1, 0, 2);
 
     Shader towerShader("../shaders/tower.vert","../shaders/tower.frag");
@@ -48,7 +48,7 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     Shader lightingShader("../shaders/box.vert", "../shaders/box.frag");
-    Shader lampShader("../shaders/lamp.vert", "../shaders/lam.frag");
+    Shader lampShader("../shaders/lamp.vert", "../shaders/lamp.frag");
     Shader skyboxShader("../shaders/skybox.vert", "../shaders/skybox.frag");
 
     float vertices[] = {
@@ -134,8 +134,8 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    unsigned int diffuseMap = loadTexture("../container2.png");
-    unsigned int specularMap = loadTexture("../container2_specular.png");
+    unsigned int diffuseMap = loadTexture("../resources/container2.png");
+    unsigned int specularMap = loadTexture("../resources/container2_specular.png");
 
     // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
     unsigned int lightVAO;
@@ -150,7 +150,7 @@ int main()
     lightingShader.setInt("material.diffuse", 0);
     lightingShader.setInt("material.specular", 1);
 
-    Skybox skybox({
+    cubeMesh skybox({
                           "../resources/rainbow_lf.png",
                           "../resources/rainbow_rt.png",
 
@@ -160,6 +160,11 @@ int main()
                           "../resources/rainbow_ft.png",
                           "../resources/rainbow_bk.png"
     });
+
+    cubeMesh photoCuber({
+
+    });
+
 
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)window.width / (float)window.height, 0.1f, 100.0f);
 
@@ -176,18 +181,15 @@ int main()
 
         glm::mat4 view = camera.GetViewMatrix();
 
-        // be sure to activate shader when setting uniforms/drawing objects
         lightingShader.use();
         lightingShader.setVec3("viewPos", camera.Position);
         lightingShader.setFloat("material.shininess", 32.0f);
 
-        // directional light
         lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
         lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
         lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-        // point light 1
         lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
         lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
@@ -196,7 +198,6 @@ int main()
         lightingShader.setFloat("pointLights[0].linear", 0.09);
         lightingShader.setFloat("pointLights[0].quadratic", 0.032);
 
-        // point light 2
         lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
         lightingShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
@@ -205,7 +206,6 @@ int main()
         lightingShader.setFloat("pointLights[1].linear", 0.09);
         lightingShader.setFloat("pointLights[1].quadratic", 0.032);
 
-        // point light 3
         lightingShader.setVec3("pointLights[2].position", pointLightPositions[2]);
         lightingShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
@@ -214,7 +214,6 @@ int main()
         lightingShader.setFloat("pointLights[2].linear", 0.09);
         lightingShader.setFloat("pointLights[2].quadratic", 0.032);
 
-        // point light 4
         lightingShader.setVec3("pointLights[3].position", pointLightPositions[3]);
         lightingShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
@@ -223,7 +222,6 @@ int main()
         lightingShader.setFloat("pointLights[3].linear", 0.09);
         lightingShader.setFloat("pointLights[3].quadratic", 0.032);
 
-        // spotLight
         lightingShader.setVec3("spotLight.position", camera.Position);
         lightingShader.setVec3("spotLight.direction", camera.Front);
         lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
@@ -235,11 +233,9 @@ int main()
         lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
         lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
-        // view/projection transformations
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
 
-        // world transformation
         glm::mat4 model = glm::mat4(1.0f);
         lightingShader.setMat4("model", model);
 
@@ -248,11 +244,9 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, specularMap);
 
-        // render containers
         glBindVertexArray(cubeVAO);
         for (unsigned int i = 0; i < 10; i++)
         {
-            // calculate the model matrix for each object and pass it to shader before drawing
             glm::mat4 buffModel = glm::mat4(1.0f);
             buffModel = glm::translate(buffModel, cubePositions[i]);
             float angle = 20.0f * i;
@@ -262,31 +256,48 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-        // also draw the lamp object(s)
-        lampShader.use();
-        lampShader.setMat4("projection", projection);
-        lampShader.setMat4("view", view);
-
-        // we now draw as many light bulbs as we have point lights.
-        glBindVertexArray(lightVAO);
-        for (auto pointLightPosition : pointLightPositions)
         {
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, pointLightPosition);
-            model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
-            lampShader.setMat4("model", model);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            lampShader.use();
+            lampShader.setMat4("projection", projection);
+            lampShader.setMat4("view", view);
+
+            glBindVertexArray(lightVAO);
+            for (auto pointLightPosition : pointLightPositions)
+            {
+                model = glm::mat4(1.0f);
+                model = glm::translate(model, pointLightPosition);
+                model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
+                lampShader.setMat4("model", model);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }
         }
 
-        glm::mat4 buffModel = glm::mat4(1.0f);
-        buffModel = glm::translate(buffModel, towerPosition);
-        towerShader.setMat4("model", buffModel);
-        towerShader.setMat4("projection", projection);
-        towerShader.setMat4("view", view);
-        tower.render(towerShader);
+        {
+            glm::mat4 buffModel = glm::mat4(1.0f);
+            buffModel = glm::translate(buffModel, glm::vec3( -2.7f,  0.2f,  2.0f));
 
+            towerShader.use();
+            towerShader.setMat4("model", buffModel);
+            towerShader.setMat4("projection", projection);
+            towerShader.setMat4("view", view);
+            towerShader.setVec3("cameraPos", camera.Position);
 
-        skybox.render(skyboxShader, camera, projection);
+            towerShader.setInt("skybox", 0);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxShader.ID);
+
+            tower.render(towerShader);
+        }
+
+        {
+            glDepthFunc(GL_LEQUAL);
+            skyboxShader.use();
+            glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+            skyboxShader.setMat4("view", skyboxView);
+            skyboxShader.setMat4("projection", projection);
+
+            skybox.render(camera, projection);
+        }
 
         glfwSwapBuffers(window.window);
         glfwPollEvents();
@@ -295,6 +306,7 @@ int main()
     glDeleteVertexArrays(1, &cubeVAO);
     glDeleteVertexArrays(1, &lightVAO);
     skybox.terminate();
+    tower.terminate();
     glDeleteBuffers(1, &VBO);
 
     glfwTerminate();
@@ -318,8 +330,6 @@ void processInput(GLFWwindow *window)
 
 void framebuffer_size_callback(GLFWwindow*, int width, int height)
 {
-    // make sure the viewport matches the new window dimensions; note that width and
-    // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
 
@@ -348,4 +358,3 @@ void scroll_callback(GLFWwindow*, double, double yoffset)
 {
     camera.ProcessMouseScroll(yoffset);
 }
-

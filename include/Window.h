@@ -29,7 +29,7 @@ public:
                 glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
         #endif
 
-        window = glfwCreateWindow(width, height, "LearnOpenGL", nullptr, nullptr);
+        window = glfwCreateWindow(width, height, "Nick", nullptr, nullptr);
 
         if ( !window )
         {
