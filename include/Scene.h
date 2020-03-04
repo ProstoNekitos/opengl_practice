@@ -4,7 +4,7 @@
 #include <vector>
 #include "Mesh.h"
 
-#include "cubeMesh.h"
+#include "CubeMesh.h"
 
 /**
  * 2lazy2implement right now
@@ -17,7 +17,7 @@ class Scene
     virtual void render();
 
     std::vector<Mesh> meshes;
-    cubeMesh skybox;
+    CubeMesh skybox;
 };
 
 #endif //UNTITLED_SCENE_H

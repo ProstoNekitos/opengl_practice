@@ -16,11 +16,11 @@
 #include "Shader.h"
 #include "Camera.h"
 
-class cubeMesh
+class CubeMesh
 {
 public:
 
-    explicit cubeMesh(const std::vector<std::string>& paths)
+    explicit CubeMesh(const std::vector<std::string>& paths)
     {
         float skyboxVertices[] = {
                 -1.0f,  1.0f, -1.0f,
@@ -76,10 +76,12 @@ public:
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     }
 
-    unsigned int loadCubemap(std::vector<std::string> faces)
+    static unsigned int loadCubemap(std::vector<std::string> faces)
     {
-        glGenTextures(1, &textureID);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+        unsigned int ID;
+
+        glGenTextures(1, &ID);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
 
         int width, height, nrChannels;
         for (unsigned int i = 0; i < faces.size(); i++)
@@ -106,7 +108,7 @@ public:
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-        return textureID;
+        return ID;
     }
 
     void render(Camera camera, glm::mat4 projection)

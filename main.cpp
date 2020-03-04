@@ -9,7 +9,7 @@
 
 #include "Shader.h"
 #include "Camera.h"
-#include "cubeMesh.h"
+#include "CubeMesh.h"
 #include "Window.h"
 #include "Mesh.h"
 
@@ -40,6 +40,7 @@ int main()
     glm::vec3 towerPosition(1.1, 0, 2);
 
     Shader towerShader("../shaders/tower.vert","../shaders/tower.frag");
+    Shader photoCubeShader("../shaders/photocube.vert", "../shaders/photocube.frag");
 
     window.setMouseCallback(mouse_callback);
     window.setFBCallback(framebuffer_size_callback);
@@ -150,7 +151,7 @@ int main()
     lightingShader.setInt("material.diffuse", 0);
     lightingShader.setInt("material.specular", 1);
 
-    cubeMesh skybox({
+    CubeMesh skybox({
                           "../resources/rainbow_lf.png",
                           "../resources/rainbow_rt.png",
 
@@ -161,8 +162,26 @@ int main()
                           "../resources/rainbow_bk.png"
     });
 
-    cubeMesh photoCuber({
+    CubeMesh photoCube({
+        "../resources/photocube/skype_lf.png",
+        "../resources/photocube/skype_rt.png",
 
+        "../resources/photocube/skype_up.png",
+        "../resources/photocube/skype_dn.png",
+
+        "../resources/photocube/skype_ft.png",
+        "../resources/photocube/skype_bk.png",
+    });
+
+    unsigned int PCsecondTexture = CubeMesh::loadCubemap({
+        "../resources/photocube/sp3_lf.png",
+        "../resources/photocube/sp3_rt.png",
+
+        "../resources/photocube/sp3_up.png",
+        "../resources/photocube/sp3_dn.png",
+
+        "../resources/photocube/sp3_ft.png",
+        "../resources/photocube/sp3_bk.png",
     });
 
 
@@ -180,6 +199,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glm::mat4 view = camera.GetViewMatrix();
+        glm::mat4 model = glm::mat4(1.0f);
 
         lightingShader.use();
         lightingShader.setVec3("viewPos", camera.Position);
@@ -236,26 +256,29 @@ int main()
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
 
-        glm::mat4 model = glm::mat4(1.0f);
-        lightingShader.setMat4("model", model);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, diffuseMap);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, specularMap);
-
-        glBindVertexArray(cubeVAO);
-        for (unsigned int i = 0; i < 10; i++)
+        //Cubes
         {
-            glm::mat4 buffModel = glm::mat4(1.0f);
-            buffModel = glm::translate(buffModel, cubePositions[i]);
-            float angle = 20.0f * i;
-            buffModel = glm::rotate(buffModel, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            lightingShader.setMat4("model", buffModel);
+            lightingShader.setMat4("model", model);
 
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, diffuseMap);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, specularMap);
+
+            glBindVertexArray(cubeVAO);
+            for (unsigned int i = 0; i < 10; i++)
+            {
+                glm::mat4 buffModel = glm::mat4(1.0f);
+                buffModel = glm::translate(buffModel, cubePositions[i]);
+                float angle = 20.0f * i;
+                buffModel = glm::rotate(buffModel, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+                lightingShader.setMat4("model", buffModel);
+
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }
         }
 
+        //Lamps
         {
             lampShader.use();
             lampShader.setMat4("projection", projection);
@@ -272,6 +295,7 @@ int main()
             }
         }
 
+        //Tower
         {
             glm::mat4 buffModel = glm::mat4(1.0f);
             buffModel = glm::translate(buffModel, glm::vec3( -2.7f,  0.2f,  2.0f));
@@ -289,6 +313,25 @@ int main()
             tower.render(towerShader);
         }
 
+        //Photocube
+        {
+            glm::mat4 buffModel = glm::mat4(1.0f);
+            buffModel = glm::translate(buffModel, glm::vec3(-4, 1, 1));
+
+            photoCubeShader.use();
+            photoCubeShader.setMat4("model", buffModel);
+            photoCubeShader.setMat4("projection", projection);
+            photoCubeShader.setMat4("view", view);
+
+            //set second texture
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, PCsecondTexture);
+            photoCubeShader.setInt("tex2", 1);
+
+            photoCube.render(camera, projection);
+        }
+
+        //Skybox
         {
             glDepthFunc(GL_LEQUAL);
             skyboxShader.use();
