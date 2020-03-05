@@ -1,5 +1,5 @@
-#ifndef UNTITLED_TOWER_H
-#define UNTITLED_TOWER_H
+#ifndef UNTITLED_MESHFACILITY_H
+#define UNTITLED_MESHFACILITY_H
 
 #include <cmath>
 #include <algorithm>
@@ -7,10 +7,10 @@
 
 #include <Mesh.h>
 
-class Tower
+class MeshFacility
 {
 public:
-    std::vector<glm::vec3> generateSurface(size_t sectorCount)
+    static std::vector<glm::vec3> generateSurface(size_t sectorCount)
     {
         float sectorStep = 2.0f * M_PI / sectorCount;
         float sectorAngle;  // radian
@@ -24,7 +24,7 @@ public:
         return vert;
     }
 
-    Mesh buildVerticesSmooth(unsigned int sectorCount, const std::string& texturePath)
+    static Mesh generateCylinder(unsigned int sectorCount, const std::map<float, float>& heightRadMap, const std::string& texturePath)
     {
         std::vector<glm::vec3> unitVertices = generateSurface(sectorCount);
         glm::vec3 translationMat(1);
@@ -67,16 +67,6 @@ public:
 
         return std::move( Mesh(vertices, indices, std::vector<Texture>( loadTexture( texturePath.c_str() ) )) );
     }
-
-    std::map<float, float> heightRadMap = {
-            {1.5,0.1},{1.55,0.3},{1.7,0.35},{1.85,0.3},{1.9,0.1}, //ball  ///<TODO sinusoid
-            {1.43,0.4},{1.46,0.43},{1.49,0.4}, //upper ring
-            {1.4, 0.35}, {.5, 0.4}, //slide ///<TODO sinusoid
-            {-0.8, 1}, {-0.6, 1}, //above bottom ring before slide
-            {-0.87, .92}, {-0.84,.9}, {-0.81,.92}, //bottom ring
-            {-1, 1}, {-0.9, 1} //bottom
-    };
-
 };
 
-#endif //UNTITLED_TOWER_H
+#endif //UNTITLED_MESHFACILITY_H

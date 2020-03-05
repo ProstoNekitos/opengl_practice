@@ -111,7 +111,7 @@ public:
         return ID;
     }
 
-    void render(Camera camera, glm::mat4 projection)
+    void render()
     {
         glBindVertexArray(VAO);
         glActiveTexture(GL_TEXTURE0);
