@@ -36,7 +36,7 @@ public:
             std::for_each(lvlVert.begin(), lvlVert.end(),[&hr, &vertices](glm::vec3 vert){
                 glm::vec3 norm = vert;
                 glm::vec2 tex = {0,0};
-                vert *= hr.second; ///< At first scale down by rad, then inc height
+                vert *= hr.second; ///< At first scale down by spinRad, then inc height
                 vert += glm::vec3(0,hr.first,0);
                 vertices.emplace_back(Vertex{vert, norm, tex});
             });
@@ -65,7 +65,7 @@ public:
             indices.insert(indices.end(), buffIndicies, buffIndicies + 6);
         }
 
-        return std::move( Mesh(vertices, indices, std::vector<Texture>( loadTexture( texturePath.c_str() ) )) );
+        return std::move( Mesh(vertices, indices, std::vector<Texture>( Texture::loadTexture( texturePath.c_str() ) )) );
     }
 };
 

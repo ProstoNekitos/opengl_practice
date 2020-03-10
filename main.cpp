@@ -12,8 +12,12 @@
 #include "CubeMesh.h"
 #include "Window.h"
 #include "Mesh.h"
+#include "Sphere.h"
+#include "lightScene.h"
 
 #include "MeshFacility.h"
+
+
 
 #include <iostream>
 
@@ -24,37 +28,6 @@ void processInput(GLFWwindow *window);
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-
-unsigned int additionalFB()
-{
-    unsigned int framebuffer;
-    glGenFramebuffers(1, &framebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-    unsigned int texColorBuffer;
-    glGenTextures(1, &texColorBuffer);
-    glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
-
-    unsigned int rbo;
-    glGenRenderbuffers(1, &rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    return 1;
-};
 
 // timing
 double deltaTime = 0.0f;
@@ -80,13 +53,12 @@ int main()
 
     //glEnable(GL_CULL_FACE); ///< TODO optimize indices generation
 
-
     //Shaders
     Shader towerShader("../shaders/tower.vert","../shaders/tower.frag");
     Shader photoCubeShader("../shaders/photocube.vert", "../shaders/photocube.frag");
     Shader outlineShader("../shaders/outline.vert", "../shaders/outline.frag");
     Shader lightingShader("../shaders/box.vert", "../shaders/box.frag");
-    Shader lampShader("../shaders/lamp.vert", "../shaders/lamp.frag");
+    Shader defaultShader("../shaders/default.vert", "../shaders/defaut.frag");
     Shader skyboxShader("../shaders/skybox.vert", "../shaders/skybox.frag");
 
     //Meshes
@@ -121,6 +93,12 @@ int main()
                                "../resources/photocube/skype_ft.png",
                                "../resources/photocube/skype_bk.png",
                        });
+
+    Sphere sph;
+
+    Mesh sphere(sph.getVertAsVector(), sph.getNormAsVector(), sph.getTexCoorsAsVector(), sph.getIndAsVector());
+    Mesh adjSph1(sph.getVertAsVector(), sph.getNormAsVector(), sph.getTexCoorsAsVector(), sph.getIndAsVector());
+    Mesh adjSph2(sph.getVertAsVector(), sph.getNormAsVector(), sph.getTexCoorsAsVector(), sph.getIndAsVector());
 
     float vertices[] = {
             // positions          // normals           // texture coords
@@ -205,8 +183,8 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    unsigned int diffuseMap = loadTexture("../resources/container2.png");
-    unsigned int specularMap = loadTexture("../resources/container2_specular.png");
+    unsigned int diffuseMap = Texture::loadTexture("../resources/container2.png");
+    unsigned int specularMap = Texture::loadTexture("../resources/container2_specular.png");
 
     // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
     unsigned int lightVAO;
@@ -235,13 +213,21 @@ int main()
 
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)window.width / (float)window.height, 0.1f, 100.0f);
 
+    LightScene scene1;
+
     while (!glfwWindowShouldClose(window.window)) //Scheisse
     {
+
         double currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
         processInput(window.window);
+
+        scene1.render(camera, projection);
+
+/*
+        glEnable(GL_DEPTH_TEST);
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -266,7 +252,7 @@ int main()
             lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
             lightingShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
             lightingShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-            lightingShader.setFloat("pointLights[0].constant", 1.0f);
+            lightingShader.setFloat("pointLights[0].constframebufferant", 1.0f);
             lightingShader.setFloat("pointLights[0].linear", 0.09);
             lightingShader.setFloat("pointLights[0].quadratic", 0.032);
 
@@ -309,6 +295,7 @@ int main()
             lightingShader.setMat4("view", view);
         }
 
+
         //Cubes
         {
             lightingShader.setMat4("model", model);
@@ -333,9 +320,9 @@ int main()
 
         //Lamps
         {
-            lampShader.use();
-            lampShader.setMat4("projection", projection);
-            lampShader.setMat4("view", view);
+            defaultShader.use();
+            defaultShader.setMat4("projection", projection);
+            defaultShader.setMat4("view", view);
 
             glBindVertexArray(lightVAO);
             for (auto pointLightPosition : pointLightPositions)
@@ -343,12 +330,12 @@ int main()
                 model = glm::mat4(1.0f);
                 model = glm::translate(model, pointLightPosition);
                 model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
-                lampShader.setMat4("model", model);
+                defaultShader.setMat4("model", model);
                 glDrawArrays(GL_TRIANGLES, 0, 36);
             }
         }
 
-        //MeshFacility
+        //Tower
         {
             model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3( -2.7f,  0.2f,  2.0f));
@@ -405,6 +392,36 @@ int main()
             photoCube.render();
         }
 
+        //Adj spheres
+        {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(2, 2, 2));
+            model = glm::translate(model , {-4, 1, 1});
+            model = glm::rotate(model, (float)glfwGetTime() * 5, glm::vec3(0.5f, 1.0f, 0.3f));
+            model = glm::translate(model , {4, -1, -1});
+
+            defaultShader.use();
+            defaultShader.setMat4("model", model);
+            defaultShader.setMat4("projection", projection);
+            defaultShader.setMat4("view", view);
+
+            adjSph1.render(defaultShader);
+
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(2, 2, 2));
+            model = glm::translate(model , {-4, 1, 1});
+            model = glm::rotate(model, -(float)glfwGetTime() * 5, glm::vec3(0.5f, 1.0f, 0.3f));
+            model = glm::translate(model , {4, -1, -1});
+
+            defaultShader.use();
+            defaultShader.setMat4("model", model);
+            defaultShader.setMat4("projection", projection);
+            defaultShader.setMat4("view", view);
+
+            adjSph2.render(defaultShader);
+        }
+
+
         //Skybox
         {
             glDepthFunc(GL_LEQUAL);
@@ -414,7 +431,7 @@ int main()
             skyboxShader.setMat4("projection", projection);
 
             skybox.render();
-        }
+        }*/
 
         glfwSwapBuffers(window.window);
         glfwPollEvents();

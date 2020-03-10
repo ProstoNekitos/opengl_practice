@@ -2,19 +2,32 @@
 #define UNTITLED_SCENE_H
 
 #include <vector>
-#include "Mesh.h"
 
+#include "Mesh.h"
 #include "CubeMesh.h"
+
+#include "Camera.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 /**
  * 2lazy2implement right now
  */
 class Scene
 {
-    Scene();
+    virtual void addObject(){};
+    virtual void render(Camera cam, glm::mat4 projection){};
 
-    virtual void addObject();
-    virtual void render();
+    void terminate()
+    {
+        for(auto& a : meshes)
+        {
+            a.terminate();
+        }
+
+        skybox.terminate();
+    }
 
     std::vector<Mesh> meshes;
     CubeMesh skybox;

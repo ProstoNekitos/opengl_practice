@@ -12,6 +12,7 @@
 #include <stdexcept>
 
 #include <Camera.h>
+#include "Scene.h"
 
 class Window
 {
@@ -80,6 +81,8 @@ public:
     size_t width;
 
     Camera* camera;
+
+    std::vector<Scene> scenes;
 
     GLFWwindow* window = nullptr;
 };
