@@ -1,9 +1,5 @@
-#include <iostream>
-#include <iomanip>
 #include <cmath>
 #include "Sphere.h"
-
-
 
 // constants //////////////////////////////////////////////////////////////////
 const int MIN_SECTOR_COUNT = 3;
@@ -16,8 +12,6 @@ Sphere::Sphere(float radius, int sectors, int stacks, bool smooth) : interleaved
 {
     set(radius, sectors, stacks, smooth);
 }
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // setters
@@ -210,8 +204,6 @@ void Sphere::buildVerticesSmooth()
     // generate interleaved vertex array as well
     buildInterleavedVertices();
 }
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // generate vertices with flat shading

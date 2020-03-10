@@ -38,14 +38,13 @@ public:
     [[nodiscard]] const float* getVertices() const        { return vertices.data(); }
     [[nodiscard]] const float* getNormals() const         { return normals.data(); }
     [[nodiscard]] const float* getTexCoords() const       { return texCoords.data(); }
+    [[nodiscard]] std::vector<float> getVertAsVector() const { return vertices; }
+    [[nodiscard]] std::vector<float> getNormAsVector() const { return normals; }
+    [[nodiscard]] std::vector<float> getTexCoorsAsVector() const { return texCoords; }
 
-    std::vector<float> getVertAsVector() const { return vertices; }
-    std::vector<float> getNormAsVector() const { return normals; }
-    std::vector<float> getTexCoorsAsVector() const { return texCoords; }
-
-    std::vector<unsigned int> getIndAsVector() const { return indices; }
-    const unsigned int* getIndices() const  { return indices.data(); }
-    const unsigned int* getLineIndices() const  { return lineIndices.data(); }
+    [[nodiscard]] std::vector<unsigned int> getIndAsVector() const { return indices; }
+    [[nodiscard]] const unsigned int* getIndices() const  { return indices.data(); }
+    [[nodiscard]] const unsigned int* getLineIndices() const  { return lineIndices.data(); }
 
     // for interleaved vertices: V/N/T
     unsigned int getInterleavedVertexCount() const  { return getVertexCount(); }    // # of vertices
