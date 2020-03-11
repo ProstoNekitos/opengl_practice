@@ -30,7 +30,7 @@ enum en_type:int {DIFFUSE, SPECULAR, NORMAL, HEIGHT};
 
 struct Texture {
     unsigned int id;
-    en_type type;
+    en_type type = en_type::DIFFUSE;
 
     static unsigned int loadTexture(char const * path)
     {
@@ -110,6 +110,14 @@ public:
         setup();
     }
 
+    void setupTextures(const vector<Texture>& tex){
+        textures = tex;
+    }
+
+    /**
+     * Set textures using uniform
+     * @param shader Textures destinataion
+     */
     void render(Shader shader)
     {
         unsigned int diffuseNr  = 1;
@@ -152,6 +160,9 @@ public:
         glActiveTexture(GL_TEXTURE0);
     }
 
+    /**
+     * Delete buffers
+     */
     void terminate(){
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
@@ -161,6 +172,9 @@ public:
 private:
     unsigned int VBO, EBO;
 
+    /**
+     * Setup VAO, VBO & EBO
+     */
     void setup()
     {
         glGenVertexArrays(1, &VAO);

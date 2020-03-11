@@ -69,7 +69,7 @@ int main()
              {-0.8, 1}, {-0.6, 1}, //above bottom ring before slide
              {-0.87, .92}, {-0.84,.9}, {-0.81,.92}, //bottom ring
              {-1, 1}, {-0.9, 1}}, //bottom
-             "../resources/container2.png");
+             "../resources/2k_moon_resized.png");
     glm::vec3 towerPosition(1.1, 0, 2);
 
     CubeMesh skybox({
@@ -84,15 +84,15 @@ int main()
                         });
 
     CubeMesh photoCube({
-                               "../resources/photocube/skype_lf.png",
-                               "../resources/photocube/skype_rt.png",
+                           "../resources/photocube/skype_lf.png",
+                           "../resources/photocube/skype_rt.png",
 
-                               "../resources/photocube/skype_up.png",
-                               "../resources/photocube/skype_dn.png",
+                           "../resources/photocube/skype_up.png",
+                           "../resources/photocube/skype_dn.png",
 
-                               "../resources/photocube/skype_ft.png",
-                               "../resources/photocube/skype_bk.png",
-                       });
+                           "../resources/photocube/skype_ft.png",
+                           "../resources/photocube/skype_bk.png",
+                   });
 
     Sphere sph;
 
@@ -183,8 +183,8 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    unsigned int diffuseMap = Texture::loadTexture("../resources/container2.png");
-    unsigned int specularMap = Texture::loadTexture("../resources/container2_specular.png");
+    //unsigned int diffuseMap = Texture::loadTexture("../resources/container2.png");
+    //unsigned int specularMap = Texture::loadTexture("../resources/container2_specular.png");
 
     // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
     unsigned int lightVAO;

@@ -16,6 +16,7 @@
  */
 class Scene
 {
+public:
     virtual void addObject(){};
     virtual void render(Camera cam, glm::mat4 projection){};
 

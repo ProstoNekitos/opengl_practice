@@ -1,5 +1,3 @@
-
-
 #version 330 core
 out vec4 FragColor;
 
@@ -15,6 +13,8 @@ struct DirLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    bool enabled;
 };
 
 struct PointLight {
@@ -27,6 +27,8 @@ struct PointLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    bool enabled;
 };
 
 struct SpotLight {
@@ -43,6 +45,8 @@ struct SpotLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    bool enabled;
 };
 
 uniform SpotLight spotLs[12];
