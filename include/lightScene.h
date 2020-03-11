@@ -13,15 +13,15 @@ public:
     explicit LightScene(const Sphere& sph = Sphere()) : lightningShader("../shaders/box.vert", "../shaders/box.frag"),
     defaultShader("../shaders/default.vert", "../shaders/defaut.frag"),
     skyboxShader("../shaders/skybox.vert", "../shaders/skybox.frag"),
+    boxShader("../shaders/photocube.vert", "../shaders/photocube.frag"),
     sphere(sph.toMesh(), sph.getIndAsVector(), {}),
     moonTexs(1, {Texture::loadTexture("../resources/2k_moon_resized.png"), en_type::DIFFUSE}),
     starTexs(1, {Texture::loadTexture("../resources/2k_sun_resized.png"), en_type::DIFFUSE}),
     planetTexs(1, {Texture::loadTexture("../resources/2k_earth_nightmap_resized.png"), en_type::DIFFUSE})
     {
         skybox.setTexture(CubeMesh::loadCubemap({
-                                                        "../resources/skybox/right.png",
+            "../resources/skybox/right.png",
             "../resources/skybox/left.png",
-
 
             "../resources/skybox/top.png",
             "../resources/skybox/bottom.png",
@@ -29,6 +29,18 @@ public:
             "../resources/skybox/front.png",
             "../resources/skybox/back.png",
             }));
+
+        box.setTexture(CubeMesh::loadCubemap({
+                "../resources/blending_transparent_window.png",
+                "../resources/blending_transparent_window.png",
+
+                "../resources/blending_transparent_window.png",
+                "../resources/blending_transparent_window.png",
+
+                "../resources/blending_transparent_window.png",
+                "../resources/blending_transparent_window.png",
+                }));
+
 
         Sphere sphereVertGen;
         sphere =  Mesh(sphereVertGen.toMesh(), sphereVertGen.getIndAsVector(), starTexs);
@@ -156,7 +168,12 @@ public:
 
     void render(Camera camera, glm::mat4 projection) override {
         glEnable(GL_DEPTH_TEST);
+
         glDisable(GL_STENCIL_TEST);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         glClearColor(0.1, 0.1, 0.1, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -171,7 +188,6 @@ public:
         dynamic_cast<SpotLight*>(lights[2])->direction = {planet_x * planetOrbit, 0, planet_y * planetOrbit};
 
         applyLights(defaultShader, camera);
-
 
         //Star
         {
@@ -250,6 +266,8 @@ public:
             model = glm::rotate( model, glm::radians(axisTiltAngle), {0.5, 1.0f, 0.2} );
             model = glm::rotate( model, (float)glfwGetTime() , {0.0,23.0,1.0f} );
 
+            glm::mat4 boxModel = model;
+
             //To planet surface
             model = glm::translate( model, {planetRad, 0, planetRad} );
 
@@ -261,13 +279,23 @@ public:
             defaultShader.setMat4("view", view);
 
             sphere.render(defaultShader);
+
+            //boxModel = glm::translate( boxModel, {planetRad, 0, -planetRad} );
+
+            boxShader.use();
+            boxShader.setMat4("model", model);
+            boxShader.setMat4("projection", projection);
+            boxShader.setMat4("view", view);
+
+            box.render();
+
         }
 
         //Skybox
         {
             glDepthFunc(GL_LEQUAL);
             skyboxShader.use();
-            skyboxShader.setInt("skybox", 0);
+            //skyboxShader.setInt("skybox", 0);
             glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.GetViewMatrix()));
             skyboxShader.setMat4("view", skyboxView);
             skyboxShader.setMat4("projection", projection);
@@ -277,6 +305,10 @@ public:
     }
 
     Mesh sphere;
+
+    CubeMesh box;
+    Shader boxShader;
+
     Shader lightningShader;
     Shader defaultShader;
 
@@ -285,6 +317,7 @@ public:
     std::vector<Texture> moonTexs;
     std::vector<Texture> planetTexs;
     std::vector<Texture> starTexs;
+    std::vector<Texture> transpTexture;
 
     std::vector<Light*> lights;
 

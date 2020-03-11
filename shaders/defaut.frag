@@ -70,6 +70,8 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
+    FragColor = texture(texture_diffuse1, TexCoords); // set default texture
+
     if( (plNum + dirNum + spotNum) != 0 )
     {
         vec3 result = vec3(0);
@@ -83,10 +85,8 @@ void main()
         for( int i = 0; i < spotNum; ++i )
             result += CalcSpotLight(spotLights[i], norm, FragPos, viewDir);
 
-        FragColor = vec4(result, 1.0);
+        FragColor = vec4(result, 1);
     }
-    else
-        FragColor = texture(texture_diffuse1, TexCoords); // set default texture
 }
 
 
