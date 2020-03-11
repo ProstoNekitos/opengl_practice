@@ -1,11 +1,12 @@
 #include <glad/glad.h>
+
 #include <GLFW/glfw3.h>
+#include "Window.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Camera.h"
-#include "Window.h"
 #include "lightScene.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);

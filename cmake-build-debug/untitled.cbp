@@ -110,10 +110,16 @@
 		<Unit filename="/home/nolv/Workspace/scene/include/Sphere.h">
 			<Option target="untitled"/>
 		</Unit>
+		<Unit filename="/home/nolv/Workspace/scene/include/Texture.h">
+			<Option target="untitled"/>
+		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/include/Window.h">
 			<Option target="untitled"/>
 		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/include/lightScene.h">
+			<Option target="untitled"/>
+		</Unit>
+		<Unit filename="/home/nolv/Workspace/scene/include/particleGenerator.h">
 			<Option target="untitled"/>
 		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/include/stb_image.h">
@@ -125,7 +131,13 @@
 		<Unit filename="/home/nolv/Workspace/scene/src/Sphere.cpp">
 			<Option target="untitled"/>
 		</Unit>
+		<Unit filename="/home/nolv/Workspace/scene/src/Texture.cpp">
+			<Option target="untitled"/>
+		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/src/glad.c">
+			<Option target="untitled"/>
+		</Unit>
+		<Unit filename="/home/nolv/Workspace/scene/src/particleGenerator.cpp">
 			<Option target="untitled"/>
 		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/src/stb_image.cpp">

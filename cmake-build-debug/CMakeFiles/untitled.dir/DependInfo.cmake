@@ -16,6 +16,8 @@ set(CMAKE_C_TARGET_INCLUDE_PATH
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/nolv/Workspace/scene/main.cpp" "/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles/untitled.dir/main.cpp.o"
   "/home/nolv/Workspace/scene/src/Sphere.cpp" "/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles/untitled.dir/src/Sphere.cpp.o"
+  "/home/nolv/Workspace/scene/src/Texture.cpp" "/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles/untitled.dir/src/Texture.cpp.o"
+  "/home/nolv/Workspace/scene/src/particleGenerator.cpp" "/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles/untitled.dir/src/particleGenerator.cpp.o"
   "/home/nolv/Workspace/scene/src/stb_image.cpp" "/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles/untitled.dir/src/stb_image.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

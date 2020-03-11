@@ -123,7 +123,8 @@ public:
             glActiveTexture(GL_TEXTURE0 + i);
             string number;
             std::string name;
-            switch (textures[i].type){
+            switch (textures[i].type)
+            {
                 case DIFFUSE:
                     number = std::to_string(diffuseNr++);
                     name = "texture_diffuse";

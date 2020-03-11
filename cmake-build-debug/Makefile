@@ -177,6 +177,33 @@ src/Sphere.cpp.s:
 	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/src/Sphere.cpp.s
 .PHONY : src/Sphere.cpp.s
 
+src/Texture.o: src/Texture.cpp.o
+
+.PHONY : src/Texture.o
+
+# target to build an object file
+src/Texture.cpp.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/src/Texture.cpp.o
+.PHONY : src/Texture.cpp.o
+
+src/Texture.i: src/Texture.cpp.i
+
+.PHONY : src/Texture.i
+
+# target to preprocess a source file
+src/Texture.cpp.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/src/Texture.cpp.i
+.PHONY : src/Texture.cpp.i
+
+src/Texture.s: src/Texture.cpp.s
+
+.PHONY : src/Texture.s
+
+# target to generate assembly for a file
+src/Texture.cpp.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/src/Texture.cpp.s
+.PHONY : src/Texture.cpp.s
+
 src/glad.o: src/glad.c.o
 
 .PHONY : src/glad.o
@@ -203,6 +230,33 @@ src/glad.s: src/glad.c.s
 src/glad.c.s:
 	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/src/glad.c.s
 .PHONY : src/glad.c.s
+
+src/particleGenerator.o: src/particleGenerator.cpp.o
+
+.PHONY : src/particleGenerator.o
+
+# target to build an object file
+src/particleGenerator.cpp.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/src/particleGenerator.cpp.o
+.PHONY : src/particleGenerator.cpp.o
+
+src/particleGenerator.i: src/particleGenerator.cpp.i
+
+.PHONY : src/particleGenerator.i
+
+# target to preprocess a source file
+src/particleGenerator.cpp.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/src/particleGenerator.cpp.i
+.PHONY : src/particleGenerator.cpp.i
+
+src/particleGenerator.s: src/particleGenerator.cpp.s
+
+.PHONY : src/particleGenerator.s
+
+# target to generate assembly for a file
+src/particleGenerator.cpp.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/src/particleGenerator.cpp.s
+.PHONY : src/particleGenerator.cpp.s
 
 src/stb_image.o: src/stb_image.cpp.o
 
@@ -246,9 +300,15 @@ help:
 	@echo "... src/Sphere.o"
 	@echo "... src/Sphere.i"
 	@echo "... src/Sphere.s"
+	@echo "... src/Texture.o"
+	@echo "... src/Texture.i"
+	@echo "... src/Texture.s"
 	@echo "... src/glad.o"
 	@echo "... src/glad.i"
 	@echo "... src/glad.s"
+	@echo "... src/particleGenerator.o"
+	@echo "... src/particleGenerator.i"
+	@echo "... src/particleGenerator.s"
 	@echo "... src/stb_image.o"
 	@echo "... src/stb_image.i"
 	@echo "... src/stb_image.s"

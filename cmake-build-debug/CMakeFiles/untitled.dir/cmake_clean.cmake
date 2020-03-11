@@ -1,7 +1,9 @@
 file(REMOVE_RECURSE
   "CMakeFiles/untitled.dir/main.cpp.o"
   "CMakeFiles/untitled.dir/src/Sphere.cpp.o"
+  "CMakeFiles/untitled.dir/src/Texture.cpp.o"
   "CMakeFiles/untitled.dir/src/glad.c.o"
+  "CMakeFiles/untitled.dir/src/particleGenerator.cpp.o"
   "CMakeFiles/untitled.dir/src/stb_image.cpp.o"
   "untitled"
   "untitled.pdb"

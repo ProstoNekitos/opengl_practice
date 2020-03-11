@@ -1,7 +1,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -88,7 +87,7 @@ public:
                 Pitch = -89.0f;
         }
 
-        // Update Front, Right and Up Vectors using the updated Euler angles
+        // update Front, Right and Up Vectors using the updated Euler angles
         updateCameraVectors();
     }
 
