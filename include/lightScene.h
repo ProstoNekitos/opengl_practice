@@ -5,9 +5,6 @@
 #include "Sphere.h"
 #include "Light.h"
 
-#include "GLFW/glfw3.h"
-#include <glad/glad.h>
-
 class LightScene : public Scene{
 public:
     explicit LightScene(const Sphere& sph = Sphere()) : lightningShader("../shaders/box.vert", "../shaders/box.frag"),

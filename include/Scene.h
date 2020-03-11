@@ -1,15 +1,9 @@
 #ifndef UNTITLED_SCENE_H
 #define UNTITLED_SCENE_H
 
-#include <vector>
-
 #include "Mesh.h"
 #include "CubeMesh.h"
-
 #include "Camera.h"
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 /**
  * 2lazy2implement right now

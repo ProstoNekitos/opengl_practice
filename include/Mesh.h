@@ -1,18 +1,11 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <glad/glad.h> // holds all OpenGL type declarations
+#include "Shader.h"
+
+#include <glm/gtc/matrix_transform.hpp>
 #include <stb_image.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include <Shader.h>
-
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
 #include <vector>
 
 using namespace std;
@@ -116,7 +109,7 @@ public:
 
     /**
      * Set textures using uniform
-     * @param shader Textures destinataion
+     * @param shader Textures destination
      */
     void render(Shader shader)
     {

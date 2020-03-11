@@ -1,7 +1,6 @@
 #ifndef GEOMETRY_SPHERE_H
 #define GEOMETRY_SPHERE_H
 
-#include <vector>
 #include "Mesh.h"
 
 class Sphere
