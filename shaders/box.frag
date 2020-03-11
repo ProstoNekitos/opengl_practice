@@ -32,6 +32,7 @@ struct PointLight {
 struct SpotLight {
     vec3 position;
     vec3 direction;
+
     float cutOff;
     float outerCutOff;
 
@@ -43,6 +44,8 @@ struct SpotLight {
     vec3 diffuse;
     vec3 specular;
 };
+
+uniform SpotLight spotLs[12];
 
 #define NR_POINT_LIGHTS 4
 

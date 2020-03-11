@@ -1,4 +1,4 @@
-    #ifndef UNTITLED_LIGHTSCENE_H
+#ifndef UNTITLED_LIGHTSCENE_H
 #define UNTITLED_LIGHTSCENE_H
 
 #include "Scene.h"
@@ -6,6 +6,10 @@
 
 #include "GLFW/glfw3.h"
 #include <glad/glad.h>
+
+
+
+
 
 class LightScene : Scene{
 public:
@@ -16,6 +20,54 @@ public:
         Sphere sphereVertGen;
         sphere =  Mesh(sphereVertGen.toMesh(), sphereVertGen.getIndAsVector(), std::vector<Texture>(1, {Texture::loadTexture("../resources/2k_sun_resized.png"), en_type::DIFFUSE}));
         centralSpherePos = glm::vec3(0, 0, 0);
+    }
+
+    void setLights(Shader shader)
+    {
+        shader.use();
+        //Sun
+        {
+            shader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+            shader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+            shader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+            shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+        }
+
+        //Sky lantern
+        {
+            shader.setVec3("pointLights[0].position", pointLightPositions[0]);
+            shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+            shader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+            shader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+            shader.setFloat("pointLights[0].constframebufferant", 1.0f);
+            shader.setFloat("pointLights[0].linear", 0.09);
+            shader.setFloat("pointLights[0].quadratic", 0.032);
+        }
+
+        //Sky lantern 2
+        {
+            shader.setVec3("pointLights[0].position", pointLightPositions[0]);
+            shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+            shader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+            shader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+            shader.setFloat("pointLights[0].constframebufferant", 1.0f);
+            shader.setFloat("pointLights[0].linear", 0.09);
+            shader.setFloat("pointLights[0].quadratic", 0.032);
+        }
+
+        //Ufo
+        {
+            shader.setVec3("spotLight.position", camera.Position);
+            shader.setVec3("spotLight.direction", camera.Front);
+            shader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+            shader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+            shader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+            shader.setFloat("spotLight.constant", 1.0f);
+            shader.setFloat("spotLight.linear", 0.09);
+            shader.setFloat("spotLight.quadratic", 0.032);
+            shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+            shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+        }
     }
 
     void render(Camera camera, glm::mat4 projection) override {
