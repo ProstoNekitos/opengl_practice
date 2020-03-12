@@ -8,7 +8,6 @@
 
 #include <stdexcept>
 
-
 class Window
 {
 

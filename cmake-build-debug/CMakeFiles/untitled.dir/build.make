@@ -70,9 +70,22 @@ CMakeFiles/untitled.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nolv/Workspace/scene/main.cpp -o CMakeFiles/untitled.dir/main.cpp.s
 
+CMakeFiles/untitled.dir/src/ResourceManager.cpp.o: CMakeFiles/untitled.dir/flags.make
+CMakeFiles/untitled.dir/src/ResourceManager.cpp.o: ../src/ResourceManager.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/untitled.dir/src/ResourceManager.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/src/ResourceManager.cpp.o -c /home/nolv/Workspace/scene/src/ResourceManager.cpp
+
+CMakeFiles/untitled.dir/src/ResourceManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/untitled.dir/src/ResourceManager.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nolv/Workspace/scene/src/ResourceManager.cpp > CMakeFiles/untitled.dir/src/ResourceManager.cpp.i
+
+CMakeFiles/untitled.dir/src/ResourceManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/src/ResourceManager.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nolv/Workspace/scene/src/ResourceManager.cpp -o CMakeFiles/untitled.dir/src/ResourceManager.cpp.s
+
 CMakeFiles/untitled.dir/src/Sphere.cpp.o: CMakeFiles/untitled.dir/flags.make
 CMakeFiles/untitled.dir/src/Sphere.cpp.o: ../src/Sphere.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/untitled.dir/src/Sphere.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/untitled.dir/src/Sphere.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/src/Sphere.cpp.o -c /home/nolv/Workspace/scene/src/Sphere.cpp
 
 CMakeFiles/untitled.dir/src/Sphere.cpp.i: cmake_force
@@ -85,7 +98,7 @@ CMakeFiles/untitled.dir/src/Sphere.cpp.s: cmake_force
 
 CMakeFiles/untitled.dir/src/Texture.cpp.o: CMakeFiles/untitled.dir/flags.make
 CMakeFiles/untitled.dir/src/Texture.cpp.o: ../src/Texture.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/untitled.dir/src/Texture.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/untitled.dir/src/Texture.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/src/Texture.cpp.o -c /home/nolv/Workspace/scene/src/Texture.cpp
 
 CMakeFiles/untitled.dir/src/Texture.cpp.i: cmake_force
@@ -98,7 +111,7 @@ CMakeFiles/untitled.dir/src/Texture.cpp.s: cmake_force
 
 CMakeFiles/untitled.dir/src/glad.c.o: CMakeFiles/untitled.dir/flags.make
 CMakeFiles/untitled.dir/src/glad.c.o: ../src/glad.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/untitled.dir/src/glad.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/untitled.dir/src/glad.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/untitled.dir/src/glad.c.o   -c /home/nolv/Workspace/scene/src/glad.c
 
 CMakeFiles/untitled.dir/src/glad.c.i: cmake_force
@@ -111,7 +124,7 @@ CMakeFiles/untitled.dir/src/glad.c.s: cmake_force
 
 CMakeFiles/untitled.dir/src/particleGenerator.cpp.o: CMakeFiles/untitled.dir/flags.make
 CMakeFiles/untitled.dir/src/particleGenerator.cpp.o: ../src/particleGenerator.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/untitled.dir/src/particleGenerator.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/untitled.dir/src/particleGenerator.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/src/particleGenerator.cpp.o -c /home/nolv/Workspace/scene/src/particleGenerator.cpp
 
 CMakeFiles/untitled.dir/src/particleGenerator.cpp.i: cmake_force
@@ -124,7 +137,7 @@ CMakeFiles/untitled.dir/src/particleGenerator.cpp.s: cmake_force
 
 CMakeFiles/untitled.dir/src/stb_image.cpp.o: CMakeFiles/untitled.dir/flags.make
 CMakeFiles/untitled.dir/src/stb_image.cpp.o: ../src/stb_image.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/untitled.dir/src/stb_image.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/untitled.dir/src/stb_image.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/src/stb_image.cpp.o -c /home/nolv/Workspace/scene/src/stb_image.cpp
 
 CMakeFiles/untitled.dir/src/stb_image.cpp.i: cmake_force
@@ -138,6 +151,7 @@ CMakeFiles/untitled.dir/src/stb_image.cpp.s: cmake_force
 # Object files for target untitled
 untitled_OBJECTS = \
 "CMakeFiles/untitled.dir/main.cpp.o" \
+"CMakeFiles/untitled.dir/src/ResourceManager.cpp.o" \
 "CMakeFiles/untitled.dir/src/Sphere.cpp.o" \
 "CMakeFiles/untitled.dir/src/Texture.cpp.o" \
 "CMakeFiles/untitled.dir/src/glad.c.o" \
@@ -148,6 +162,7 @@ untitled_OBJECTS = \
 untitled_EXTERNAL_OBJECTS =
 
 untitled: CMakeFiles/untitled.dir/main.cpp.o
+untitled: CMakeFiles/untitled.dir/src/ResourceManager.cpp.o
 untitled: CMakeFiles/untitled.dir/src/Sphere.cpp.o
 untitled: CMakeFiles/untitled.dir/src/Texture.cpp.o
 untitled: CMakeFiles/untitled.dir/src/glad.c.o
@@ -157,7 +172,7 @@ untitled: CMakeFiles/untitled.dir/build.make
 untitled: ../lib/libGLEW.a
 untitled: ../lib/libglfw3.a
 untitled: CMakeFiles/untitled.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable untitled"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/nolv/Workspace/scene/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable untitled"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/untitled.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

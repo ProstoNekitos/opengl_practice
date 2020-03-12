@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/untitled.dir/main.cpp.o"
+  "CMakeFiles/untitled.dir/src/ResourceManager.cpp.o"
   "CMakeFiles/untitled.dir/src/Sphere.cpp.o"
   "CMakeFiles/untitled.dir/src/Texture.cpp.o"
   "CMakeFiles/untitled.dir/src/glad.c.o"

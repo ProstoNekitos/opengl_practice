@@ -5,16 +5,25 @@
 #include "Sphere.h"
 #include "Light.h"
 
+#include "particleGenerator.h"
+
+#include "ResourceManager.h"
+
 class LightScene : public Scene{
 public:
-    explicit LightScene(const Sphere& sph = Sphere()) : lightningShader("../shaders/box.vert", "../shaders/box.frag"),
+    explicit LightScene(const Sphere& sph = Sphere()) :
     defaultShader("../shaders/default.vert", "../shaders/defaut.frag"),
     skyboxShader("../shaders/skybox.vert", "../shaders/skybox.frag"),
-    boxShader("../shaders/photocube.vert", "../shaders/photocube.frag"),
+    photocubeShader("../shaders/photocube.vert", "../shaders/photocube.frag"),
+    boxShader("../shaders/cube.vert", "../shaders/cube.frag"),
+    particleShader("../shaders/particles.vert", "../shaders/particles.frag"),
+    shadowMapShader("../shaders/directionalLightShadow.vert", "../shaders/empty.frag"),
+
     sphere(sph.toMesh(), sph.getIndAsVector(), {}),
     moonTexs(1, {Texture::loadTexture("../resources/2k_moon_resized.png"), en_type::DIFFUSE}),
     starTexs(1, {Texture::loadTexture("../resources/2k_sun_resized.png"), en_type::DIFFUSE}),
-    planetTexs(1, {Texture::loadTexture("../resources/2k_earth_nightmap_resized.png"), en_type::DIFFUSE})
+    planetTexs(1, {Texture::loadTexture("../resources/2k_earth_nightmap_resized.png"), en_type::DIFFUSE}),
+    pGen(particleShader, ResourceManager::LoadTexture("../resources/awesomeface.png", false, "particle"), 500, {0,2,0}, {2,2,2})
     {
         skybox.setTexture(CubeMesh::loadCubemap({
             "../resources/skybox/right.png",
@@ -25,19 +34,40 @@ public:
 
             "../resources/skybox/front.png",
             "../resources/skybox/back.png",
-            }));
+            }, true));
 
         box.setTexture(CubeMesh::loadCubemap({
-                "../resources/blending_transparent_window.png",
-                "../resources/blending_transparent_window.png",
+            "../resources/blending_transparent_window.png",
+            "../resources/blending_transparent_window.png",
 
-                "../resources/blending_transparent_window.png",
-                "../resources/blending_transparent_window.png",
+            "../resources/blending_transparent_window.png",
+            "../resources/blending_transparent_window.png",
 
-                "../resources/blending_transparent_window.png",
-                "../resources/blending_transparent_window.png",
-                }));
+            "../resources/blending_transparent_window.png",
+            "../resources/blending_transparent_window.png",
+            }, true));
 
+        photocube.setTexture(CubeMesh::loadCubemap({
+            "../resources/photocube/skype_lf.png",
+            "../resources/photocube/skype_rt.png",
+
+            "../resources/photocube/skype_up.png",
+            "../resources/photocube/skype_dn.png",
+
+            "../resources/photocube/skype_ft.png",
+            "../resources/photocube/skype_bk.png",
+        }));
+
+        photocubeSecondTexture = CubeMesh::loadCubemap({
+            "../resources/photocube/sp3_lf.png",
+            "../resources/photocube/sp3_rt.png",
+
+            "../resources/photocube/sp3_up.png",
+            "../resources/photocube/sp3_dn.png",
+
+            "../resources/photocube/sp3_ft.png",
+            "../resources/photocube/sp3_bk.png",
+        });
 
         Sphere sphereVertGen;
         sphere =  Mesh(sphereVertGen.toMesh(), sphereVertGen.getIndAsVector(), starTexs);
@@ -150,8 +180,6 @@ public:
                     shader.setFloat("spotLights["+std::to_string(spotNum)+"].cutOff", buff->cutOff);
                     shader.setFloat("spotLights["+std::to_string(spotNum)+"].outerCutOff", buff->outerCutOff);
 
-                    std::cout << buff->position.x << ' ' << buff->position.z << ' ' << buff->direction.x << ' ' << buff->direction.z << '\n';
-
                     ++spotNum;
                     break;
                 }
@@ -168,7 +196,7 @@ public:
 
         glDisable(GL_STENCIL_TEST);
 
-        glEnable(GL_BLEND);
+        //glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glClearColor(0.1, 0.1, 0.1, 1.0f);
@@ -200,6 +228,22 @@ public:
 
             sphere.setupTextures(starTexs);
             sphere.render(defaultShader);
+
+            photocubeShader.use();
+
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, centralSpherePos);
+            model = glm::scale(model, glm::vec3(0.2));
+
+            photocubeShader.setMat4("model", model);
+            photocubeShader.setMat4("projection", projection);
+            photocubeShader.setMat4("view", view);
+
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, photocubeSecondTexture);
+            photocubeShader.setInt("tex2", 1);
+
+            photocube.render();
         }
 
         //Planet
@@ -270,6 +314,7 @@ public:
 
             model = glm::scale(model, glm::vec3(0.05,0.05,0.05));
 
+
             defaultShader.use();
             defaultShader.setMat4("model", model);
             defaultShader.setMat4("projection", projection);
@@ -279,6 +324,9 @@ public:
 
             //boxModel = glm::translate( boxModel, {planetRad, 0, -planetRad} );
 
+            glEnable(GL_BLEND);
+
+
             boxShader.use();
             boxShader.setMat4("model", model);
             boxShader.setMat4("projection", projection);
@@ -286,6 +334,23 @@ public:
 
             box.render();
 
+            glDisable(GL_BLEND);
+
+        }
+
+        //photocube
+        {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, centralSpherePos);
+
+            //model = glm::scale(model, glm::vec3(starRad, starRad, starRad));
+        }
+
+        //Particles
+        {
+           // pGen.setPosition({planet_x, 0, planet_y});
+            pGen.update(0.01, 15, {0.1,0.1,0.1});
+            pGen.render();
         }
 
         //Skybox
@@ -302,19 +367,25 @@ public:
     }
 
     Mesh sphere;
+    Shader defaultShader;
 
     CubeMesh box;
     Shader boxShader;
 
-    Shader lightningShader;
-    Shader defaultShader;
+    CubeMesh photocube;
+    Shader photocubeShader;
+    unsigned int photocubeSecondTexture;
 
     Shader skyboxShader;
+
+    Shader particleShader;
+    ParticleGenerator pGen;
+
+    Shader shadowMapShader;
 
     std::vector<Texture> moonTexs;
     std::vector<Texture> planetTexs;
     std::vector<Texture> starTexs;
-    std::vector<Texture> transpTexture;
 
     std::vector<Light*> lights;
 

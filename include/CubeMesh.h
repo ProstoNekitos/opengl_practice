@@ -31,7 +31,7 @@ public:
         textureID = id;
     }
 
-    static unsigned int loadCubemap(std::vector<std::string> faces)
+    static unsigned int loadCubemap(std::vector<std::string> faces, bool alpha = false)
     {
         unsigned int ID;
 
@@ -46,7 +46,7 @@ public:
 
             if (data)
                 glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                             0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data
+                             0, alpha ? GL_RGBA : GL_RGB, width, height, 0, alpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data
                 );
             else
                 std::cout << "Cubemap tex failed to load at path: " << faces[i] << std::endl;

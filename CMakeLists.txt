@@ -15,5 +15,5 @@ find_library(GLFW
         NAMES libglfw3.a
         HINTS lib)
 
-add_executable(${PROJECT_NAME} main.cpp ${SRC} include/Shader.h include/stb_image.h src/stb_image.cpp include/Camera.h include/Scene.h include/Window.h include/Mesh.h include/CubeMesh.h include/MeshFacility.h src/Sphere.cpp include/Sphere.h include/lightScene.h include/Light.h include/Texture.h src/Texture.cpp include/particleGenerator.h src/particleGenerator.cpp)
+add_executable(${PROJECT_NAME} main.cpp ${SRC} include/Shader.h include/stb_image.h src/stb_image.cpp include/Camera.h include/Scene.h include/Window.h include/Mesh.h include/CubeMesh.h include/MeshFacility.h src/Sphere.cpp include/Sphere.h include/lightScene.h include/Light.h include/Texture.h src/Texture.cpp include/particleGenerator.h src/particleGenerator.cpp include/ResourceManager.h src/ResourceManager.cpp)
 target_link_libraries(${PROJECT_NAME} ${GLEW} ${GLFW} -ldl -lgtest -pthread)
