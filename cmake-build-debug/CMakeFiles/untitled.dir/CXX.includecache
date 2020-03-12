@@ -1300,12 +1300,6 @@ fstream
 stb_image.h
 -
 
-/home/nolv/Workspace/scene/src/Sphere.cpp
-cmath
--
-Sphere.h
-/home/nolv/Workspace/scene/src/Sphere.h
-
 /home/nolv/Workspace/scene/src/Texture.cpp
 Texture.h
 /home/nolv/Workspace/scene/src/Texture.h

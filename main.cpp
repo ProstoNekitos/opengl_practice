@@ -9,7 +9,6 @@
 #include "Camera.h"
 #include "lightScene.h"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
@@ -21,6 +20,18 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 double deltaTime = 0.0f;
 double lastFrame = 0.0f;
 
+/**
+ * //TODO:
+ * Make callback scene methods
+ * Merge texture & texture 2D
+ * Decide where to put skybox
+ * Object inheritance
+ * Model (mesh group)
+ * Group (model group)
+ * The fuck 2do with shadows
+ * Model load lib
+ */
+
 int main()
 {
     //Widnow init & settings
@@ -28,7 +39,7 @@ int main()
     window.setCamera(&camera);
     Window::initGlad();
     window.setMouseCallback(mouse_callback);
-    window.setFBCallback(framebuffer_size_callback);
+    window.setFBCallback(Window::framebuffer_size_callback);
     window.setScrollCallback(scroll_callback);
 
     //OpenGL global settings
@@ -45,7 +56,7 @@ int main()
 
     LightScene scene1;
 
-    while (!glfwWindowShouldClose(window.window)) //Scheisse
+    while (!glfwWindowShouldClose(window.window)) //Dumb
     {
 
         double currentFrame = glfwGetTime();
@@ -55,12 +66,11 @@ int main()
         processInput(window.window);
 
         scene1.render(camera, projection);
+        window.setMouseCallback(scene1.mouse_callback);
 
         glfwSwapBuffers(window.window);
         glfwPollEvents();
     }
-
-    scene1.terminate();
 
     glfwTerminate();
 
@@ -79,11 +89,6 @@ void processInput(GLFWwindow *window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
-}
-
-void framebuffer_size_callback(GLFWwindow*, int width, int height)
-{
-    glViewport(0, 0, width, height);
 }
 
 void mouse_callback(GLFWwindow*, double xpos, double ypos)

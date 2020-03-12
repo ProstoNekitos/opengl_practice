@@ -98,9 +98,6 @@
 		<Unit filename="/home/nolv/Workspace/scene/include/Mesh.h">
 			<Option target="untitled"/>
 		</Unit>
-		<Unit filename="/home/nolv/Workspace/scene/include/MeshFacility.h">
-			<Option target="untitled"/>
-		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/include/ResourceManager.h">
 			<Option target="untitled"/>
 		</Unit>
@@ -132,9 +129,6 @@
 			<Option target="untitled"/>
 		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/src/ResourceManager.cpp">
-			<Option target="untitled"/>
-		</Unit>
-		<Unit filename="/home/nolv/Workspace/scene/src/Sphere.cpp">
 			<Option target="untitled"/>
 		</Unit>
 		<Unit filename="/home/nolv/Workspace/scene/src/Texture.cpp">

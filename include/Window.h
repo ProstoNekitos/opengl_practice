@@ -21,7 +21,7 @@ public:
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         #ifdef __APPLE__
-                glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
         #endif
 
         window = glfwCreateWindow(width, height, "Nick", nullptr, nullptr);
@@ -50,6 +50,11 @@ public:
     void setFBCallback(GLFWframebuffersizefun callback)
     {
         glfwSetFramebufferSizeCallback(window, callback);
+    }
+
+    static void framebuffer_size_callback(GLFWwindow*, int width, int height)
+    {
+        glViewport(0, 0, width, height);
     }
 
     /**

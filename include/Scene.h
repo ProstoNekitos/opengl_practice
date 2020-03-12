@@ -24,7 +24,30 @@ public:
         skybox.terminate();
     }
 
+    void mouse_callback(GLFWwindow*, double xpos, double ypos)
+    {
+        static bool firstMouse = true;
+        static double lastX = 0;
+        static double lastY = 0;
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
+
+        double xoffset = xpos - lastX;
+        double yoffset = lastY - ypos;
+
+        lastX = xpos;
+        lastY = ypos;
+
+        camera.ProcessMouseMovement(xoffset, yoffset);
+    }
+
+
     std::vector<Mesh> meshes;
+    Camera camera;
     CubeMesh skybox;
 };
 

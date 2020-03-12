@@ -19,11 +19,11 @@ struct Vertex {
     glm::vec3 Bitangent;
 };
 
-enum en_type:int {DIFFUSE, SPECULAR, NORMAL, HEIGHT};
-
 struct Texture {
+    enum TYPE: int {DIFFUSE, SPECULAR, NORMAL, HEIGHT};
+
     unsigned int id;
-    en_type type = en_type::DIFFUSE;
+    TYPE type = TYPE::DIFFUSE;
 
     static unsigned int loadTexture(char const * path)
     {
@@ -125,19 +125,19 @@ public:
             std::string name;
             switch (textures[i].type)
             {
-                case DIFFUSE:
+                case Texture::TYPE::DIFFUSE:
                     number = std::to_string(diffuseNr++);
                     name = "texture_diffuse";
                     break;
-                case SPECULAR:
+                case Texture::TYPE::SPECULAR:
                     number = std::to_string(specularNr++);
                     name = "texture_specular";
                     break;
-                case NORMAL:
+                case Texture::TYPE::NORMAL:
                     number = std::to_string(normalNr++);
                     name = "texture_normal";
                     break;
-                case HEIGHT:
+                case Texture::TYPE::HEIGHT:
                     number = std::to_string(heightNr++);
                     name = "texture_height";
                     break;
@@ -154,9 +154,6 @@ public:
         glActiveTexture(GL_TEXTURE0);
     }
 
-    /**
-     * Delete buffers
-     */
     void terminate(){
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
