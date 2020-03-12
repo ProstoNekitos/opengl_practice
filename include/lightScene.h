@@ -23,7 +23,7 @@ public:
     moonTexs(1, {Texture::loadTexture("../resources/2k_moon_resized.png"), en_type::DIFFUSE}),
     starTexs(1, {Texture::loadTexture("../resources/2k_sun_resized.png"), en_type::DIFFUSE}),
     planetTexs(1, {Texture::loadTexture("../resources/2k_earth_nightmap_resized.png"), en_type::DIFFUSE}),
-    pGen(particleShader, ResourceManager::LoadTexture("../resources/awesomeface.png", false, "particle"), 500, {0,2,0}, {2,2,2})
+    pGen(particleShader, ResourceManager::LoadTexture("../resources/awesomeface.png",  "particle"), 500, {0,2,0}, {2,2,2})
     {
         skybox.setTexture(CubeMesh::loadCubemap({
             "../resources/skybox/right.png",

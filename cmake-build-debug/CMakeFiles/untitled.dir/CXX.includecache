@@ -129,6 +129,8 @@ glad/glad.h
 -
 stb_image.h
 ../include/stb_image.h
+string
+-
 
 ../include/Window.h
 Scene.h
@@ -1285,4 +1287,30 @@ Camera.h
 /home/nolv/Workspace/scene/Camera.h
 lightScene.h
 /home/nolv/Workspace/scene/lightScene.h
+
+/home/nolv/Workspace/scene/src/ResourceManager.cpp
+ResourceManager.h
+/home/nolv/Workspace/scene/src/ResourceManager.h
+iostream
+-
+sstream
+-
+fstream
+-
+stb_image.h
+-
+
+/home/nolv/Workspace/scene/src/Sphere.cpp
+cmath
+-
+Sphere.h
+/home/nolv/Workspace/scene/src/Sphere.h
+
+/home/nolv/Workspace/scene/src/Texture.cpp
+Texture.h
+/home/nolv/Workspace/scene/src/Texture.h
+
+/home/nolv/Workspace/scene/src/particleGenerator.cpp
+particleGenerator.h
+/home/nolv/Workspace/scene/src/particleGenerator.h
 

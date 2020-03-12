@@ -47,7 +47,7 @@ void ParticleGenerator::render()
         {
             shader.setVec3("offset", particle.position);
             shader.setVec4("color", particle.color);
-            texture.Bind();
+            texture.bind();
 
             glBindVertexArray(VAO);
             glDrawArrays(GL_TRIANGLES, 0, 6);
