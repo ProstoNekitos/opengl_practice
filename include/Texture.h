@@ -8,6 +8,9 @@
 class Texture2D
 {
 public:
+
+    enum TYPE: int {DIFFUSE, SPECULAR, NORMAL, HEIGHT};
+
     Texture2D();
 
     void generate(unsigned int w, unsigned int h, unsigned char* data);
@@ -24,6 +27,8 @@ public:
 
     unsigned int filterMin; // Filtering mode if texture pixels < screen pixels
     unsigned int filterMax; // Filtering mode if texture pixels > screen pixels
+
+    TYPE type = TYPE::DIFFUSE;
 };
 
 #endif

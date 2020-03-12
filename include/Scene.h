@@ -44,7 +44,7 @@ public:
 
         camera.ProcessMouseMovement(xoffset, yoffset);
     }
-
+    virtual void sceneCallback();
 
     std::vector<Mesh> meshes;
     Camera camera;
