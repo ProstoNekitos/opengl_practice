@@ -43,6 +43,19 @@ public:
         return glm::lookAt(Position, Position + Front, Up);
     }
 
+    void reset()
+    {
+        Zoom = ZOOM;
+        Position = glm::vec3(0);
+        WorldUp = glm::vec3(0,1,0);
+
+        MovementSpeed = SPEED;
+        MouseSensitivity = SENSITIVITY;
+
+        Yaw = YAW;
+        Pitch = PITCH;
+    }
+
     void ProcessKeyboard(DIRECTIONS direction, double deltaTime)
     {
         float velocity = MovementSpeed * deltaTime;
