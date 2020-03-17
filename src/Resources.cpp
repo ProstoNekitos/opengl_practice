@@ -1,4 +1,4 @@
-#include "ResourceManager.h"
+#include "Resources.h"
 
 #include <iostream>
 #include <sstream>
@@ -7,33 +7,34 @@
 #include <stb_image.h>
 
 // Instantiate static variables
-std::map<std::string, Texture2D>    ResourceManager::Textures;
-std::map<std::string, Shader>       ResourceManager::Shaders;
+std::map<std::string, Texture2D>    Resources::Textures;
+std::map<std::string, Shader>       Resources::Shaders;
 
 
-Shader ResourceManager::LoadShader(const GLchar *vShaderFile, const GLchar *fShaderFile, const GLchar *gShaderFile, std::string name)
+Shader Resources::loadShader(const std::string &name,
+        const GLchar *vShaderFile, const GLchar *fShaderFile, const GLchar *gShaderFile)
 {
     Shaders[name] = loadShaderFromFile(vShaderFile, fShaderFile, gShaderFile);
     return Shaders[name];
 }
 
-Shader ResourceManager::GetShader(const std::string& name)
+Shader Resources::getShader(const std::string& name)
 {
     return Shaders[name];
 }
 
-Texture2D ResourceManager::LoadTexture(const char *file, const std::string& name, LOADTEXAS channels)
+Texture2D Resources::loadTexture(const char *file, const std::string& name, LOADTEXAS channels)
 {
     Textures[name] = loadTextureFromFile(file, channels);
     return Textures[name];
 }
 
-Texture2D ResourceManager::GetTexture(const std::string& name)
+Texture2D Resources::getTexture(const std::string& name)
 {
     return Textures[name];
 }
 
-void ResourceManager::Clear()
+void Resources::clear()
 {
     for (auto& iter : Shaders)
         glDeleteProgram(iter.second.ID);
@@ -42,7 +43,8 @@ void ResourceManager::Clear()
         glDeleteTextures(1, &iter.second.ID);
 }
 
-Shader ResourceManager::loadShaderFromFile(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile)
+
+Shader Resources::loadShaderFromFile(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile)
 {
     std::string vertexCode;
     std::string fragmentCode;
@@ -86,7 +88,7 @@ Shader ResourceManager::loadShaderFromFile(const char *vShaderFile, const char *
     return shader;
 }
 
-Texture2D ResourceManager::loadTextureFromFile(const char *file, LOADTEXAS textureChannels)
+Texture2D Resources::loadTextureFromFile(const char *file, LOADTEXAS textureChannels)
 {
     Texture2D texture;
 

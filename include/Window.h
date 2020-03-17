@@ -2,7 +2,6 @@
 #define UNTITLED_WINDOW_H
 
 #include "lightScene.h"
-
 #include "Camera.h"
 
 #include <GLFW/glfw3.h>
@@ -38,6 +37,10 @@ public:
 
         glfwSetWindowUserPointer(window, &camera);
 
+    }
+
+    ~Window(){
+        glfwTerminate();
     }
 
     void setMouseCallback(GLFWcursorposfun callback)

@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include "CubeMesh.h"
 #include "Camera.h"
+#include "Resources.h"
 
 /**
  * 2lazy2implement right now
@@ -24,30 +25,11 @@ public:
         skybox.terminate();
     }
 
-    void mouse_callback(GLFWwindow*, double xpos, double ypos)
-    {
-        static bool firstMouse = true;
-        static double lastX = 0;
-        static double lastY = 0;
-        if (firstMouse)
-        {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
-
-        double xoffset = xpos - lastX;
-        double yoffset = lastY - ypos;
-
-        lastX = xpos;
-        lastY = ypos;
-
-        camera.ProcessMouseMovement(xoffset, yoffset);
-    }
-    virtual void sceneCallback();
+    //virtual void sceneCallback(); //might be useful for specific (per scene) input
 
     std::vector<Mesh> meshes;
-    Camera camera;
+
+    //Camera camera; still don't sure do we need separate camera for every scene or we don't
     CubeMesh skybox;
 };
 

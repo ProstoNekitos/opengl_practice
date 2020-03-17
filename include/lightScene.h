@@ -5,74 +5,42 @@
 #include "Sphere.h"
 #include "Light.h"
 
-#include "particleGenerator.h"
-
-#include "ResourceManager.h"
-
 class LightScene : public Scene{
 public:
-    explicit LightScene(const Sphere& sph = Sphere()) :
-    defaultShader("../shaders/default.vert", "../shaders/defaut.frag"),
-    skyboxShader("../shaders/skybox.vert", "../shaders/skybox.frag"),
-    photocubeShader("../shaders/photocube.vert", "../shaders/photocube.frag"),
-    boxShader("../shaders/cube.vert", "../shaders/cube.frag"),
-    particleShader("../shaders/particles.vert", "../shaders/particles.frag"),
-    shadowMapShader("../shaders/directionalLightShadow.vert", "../shaders/empty.frag"),
-
-    sphere(sph.toMesh(), sph.getIndAsVector(), {}),
-    moonTexs(1, {Texture::loadTexture("../resources/2k_moon_resized.png"), en_type::DIFFUSE}),
-    starTexs(1, {Texture::loadTexture("../resources/2k_sun_resized.png"), en_type::DIFFUSE}),
-    planetTexs(1, {Texture::loadTexture("../resources/2k_earth_nightmap_resized.png"), en_type::DIFFUSE}),
-    pGen(particleShader, ResourceManager::LoadTexture("../resources/awesomeface.png",  "particle"), 500, {0,2,0}, {2,2,2})
+    explicit LightScene(const Sphere& sph = Sphere())
     {
         skybox.setTexture(CubeMesh::loadCubemap({
-            "../resources/skybox/right.png",
-            "../resources/skybox/left.png",
+            "../resources/textures/skybox/right.png",
+            "../resources/textures/skybox/left.png",
 
-            "../resources/skybox/top.png",
-            "../resources/skybox/bottom.png",
+            "../resources/textures/skybox/top.png",
+            "../resources/textures/skybox/bottom.png",
 
-            "../resources/skybox/front.png",
-            "../resources/skybox/back.png",
+            "../resources/textures/skybox/front.png",
+            "../resources/textures/skybox/back.png",
             }, true));
 
-        box.setTexture(CubeMesh::loadCubemap({
-            "../resources/blending_transparent_window.png",
-            "../resources/blending_transparent_window.png",
-
-            "../resources/blending_transparent_window.png",
-            "../resources/blending_transparent_window.png",
-
-            "../resources/blending_transparent_window.png",
-            "../resources/blending_transparent_window.png",
-            }, true));
-
-        photocube.setTexture(CubeMesh::loadCubemap({
-            "../resources/photocube/skype_lf.png",
-            "../resources/photocube/skype_rt.png",
-
-            "../resources/photocube/skype_up.png",
-            "../resources/photocube/skype_dn.png",
-
-            "../resources/photocube/skype_ft.png",
-            "../resources/photocube/skype_bk.png",
-        }));
-
-        photocubeSecondTexture = CubeMesh::loadCubemap({
-            "../resources/photocube/sp3_lf.png",
-            "../resources/photocube/sp3_rt.png",
-
-            "../resources/photocube/sp3_up.png",
-            "../resources/photocube/sp3_dn.png",
-
-            "../resources/photocube/sp3_ft.png",
-            "../resources/photocube/sp3_bk.png",
-        });
+        loadTextures();
+        loadShaders();
 
         Sphere sphereVertGen;
-        sphere =  Mesh(sphereVertGen.toMesh(), sphereVertGen.getIndAsVector(), starTexs);
+        sphere =  Mesh(sphereVertGen.toMesh(), sphereVertGen.getIndAsVector());
+        sphere.addTexture(Resources::getTexture("sun"));
         centralSpherePos = glm::vec3(0, 0, 0);
         setLights();
+    }
+
+    void loadTextures()
+    {
+        Resources::loadTexture("../resources/textures/2k_sun_resized.png", "sun");
+        Resources::loadTexture("../resources/textures/2k_moon_resized.png", "moon");
+        Resources::loadTexture("../resources/textures/2k_earth_nightmap_resized.png", "planet");
+    }
+
+    void loadShaders()
+    {
+        Resources::loadShader("default", "../resources/shaders/default.vert", "../resources/shaders/default.frag");
+        Resources::loadShader("skybox", "../resources/shaders/skybox.vert", "../resources/shaders/skybox.frag");
     }
 
     void setLights()
@@ -192,12 +160,11 @@ public:
     }
 
     void render(Camera camera, glm::mat4 projection) override {
+
+        Shader shader = Resources::getShader("default");
+
         glEnable(GL_DEPTH_TEST);
-
         glDisable(GL_STENCIL_TEST);
-
-        //glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glClearColor(0.1, 0.1, 0.1, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -212,7 +179,7 @@ public:
         dynamic_cast<SpotLight*>(lights[2])->position = {planet_x * planetOrbit + planetRad + 0.5, 0, planet_y * planetOrbit + planetRad + 0.5};
         dynamic_cast<SpotLight*>(lights[2])->direction = {planet_x * planetOrbit, 0, planet_y * planetOrbit};
 
-        applyLights(defaultShader, camera);
+        applyLights(shader, camera);
 
         //Star
         {
@@ -221,29 +188,15 @@ public:
 
             model = glm::scale(model, glm::vec3(starRad, starRad, starRad));
 
-            defaultShader.use();
-            defaultShader.setMat4("model", model);
-            defaultShader.setMat4("projection", projection);
-            defaultShader.setMat4("view", view);
+            shader.use();
+            shader.setMat4("model", model);
+            shader.setMat4("projection", projection);
+            shader.setMat4("view", view);
 
-            sphere.setupTextures(starTexs);
-            sphere.render(defaultShader);
+            auto tex = Resources::getTexture("sun");
+            sphere.setTextures({&tex});
 
-            photocubeShader.use();
-
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, centralSpherePos);
-            model = glm::scale(model, glm::vec3(0.2));
-
-            photocubeShader.setMat4("model", model);
-            photocubeShader.setMat4("projection", projection);
-            photocubeShader.setMat4("view", view);
-
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, photocubeSecondTexture);
-            photocubeShader.setInt("tex2", 1);
-
-            photocube.render();
+            sphere.render(shader);
         }
 
         //Planet
@@ -261,13 +214,15 @@ public:
 
             model = glm::scale(model, glm::vec3(planetRad, planetRad, planetRad));
 
-            defaultShader.use();
-            defaultShader.setMat4("model", model);
-            defaultShader.setMat4("projection", projection);
-            defaultShader.setMat4("view", view);
+            shader.use();
+            shader.setMat4("model", model);
+            shader.setMat4("projection", projection);
+            shader.setMat4("view", view);
 
-            sphere.setupTextures(planetTexs);
-            sphere.render(defaultShader);
+            auto tex = Resources::getTexture("planet");
+            sphere.setTextures({&tex});
+
+            sphere.render(shader);
         }
 
         //Moon
@@ -287,16 +242,18 @@ public:
 
             model = glm::scale(model, glm::vec3(moonRad,moonRad,moonRad));
 
-            defaultShader.use();
-            defaultShader.setMat4("model", model);
-            defaultShader.setMat4("projection", projection);
-            defaultShader.setMat4("view", view);
+            shader.use();
+            shader.setMat4("model", model);
+            shader.setMat4("projection", projection);
+            shader.setMat4("view", view);
 
-            sphere.setupTextures(moonTexs);
-            sphere.render(defaultShader);
+            auto tex = Resources::getTexture("moon");
+            sphere.setTextures({&tex});
+
+            sphere.render(shader);
         }
 
-        //On planet objects
+        /*//On planet objects
         {
             model = glm::mat4(1.0f);
             model = glm::translate( model, centralSpherePos );
@@ -314,78 +271,29 @@ public:
 
             model = glm::scale(model, glm::vec3(0.05,0.05,0.05));
 
+            shader.use();
+            shader.setMat4("model", model);
+            shader.setMat4("projection", projection);
+            shader.setMat4("view", view);
 
-            defaultShader.use();
-            defaultShader.setMat4("model", model);
-            defaultShader.setMat4("projection", projection);
-            defaultShader.setMat4("view", view);
-
-            sphere.render(defaultShader);
-
-            //boxModel = glm::translate( boxModel, {planetRad, 0, -planetRad} );
-
-            glEnable(GL_BLEND);
-
-
-            boxShader.use();
-            boxShader.setMat4("model", model);
-            boxShader.setMat4("projection", projection);
-            boxShader.setMat4("view", view);
-
-            box.render();
-
-            glDisable(GL_BLEND);
-
-        }
-
-        //photocube
-        {
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, centralSpherePos);
-
-            //model = glm::scale(model, glm::vec3(starRad, starRad, starRad));
-        }
-
-        //Particles
-        {
-           // pGen.setPosition({planet_x, 0, planet_y});
-            pGen.update(0.01, 15, {0.1,0.1,0.1});
-            pGen.render();
-        }
+            sphere.render(shader);
+        }*/
 
         //Skybox
         {
+            shader = Resources::getShader("skybox");
+
             glDepthFunc(GL_LEQUAL);
-            skyboxShader.use();
-            //skyboxShader.setInt("skybox", 0);
+            shader.use();
             glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-            skyboxShader.setMat4("view", skyboxView);
-            skyboxShader.setMat4("projection", projection);
+            shader.setMat4("view", skyboxView);
+            shader.setMat4("projection", projection);
 
             skybox.render();
         }
     }
 
     Mesh sphere;
-    Shader defaultShader;
-
-    CubeMesh box;
-    Shader boxShader;
-
-    CubeMesh photocube;
-    Shader photocubeShader;
-    unsigned int photocubeSecondTexture;
-
-    Shader skyboxShader;
-
-    Shader particleShader;
-    ParticleGenerator pGen;
-
-    Shader shadowMapShader;
-
-    std::vector<Texture> moonTexs;
-    std::vector<Texture> planetTexs;
-    std::vector<Texture> starTexs;
 
     std::vector<Light*> lights;
 

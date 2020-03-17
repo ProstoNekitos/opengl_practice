@@ -15,6 +15,7 @@
  * Group (model group)
  * The fuck 2do with shadows
  * Model load lib
+ * Default path for resources (do we need it?)
  */
 
 int main()
@@ -41,7 +42,7 @@ int main()
 
     LightScene scene1;
 
-    while (!window.mustBeClosed())
+    while ( !window.mustBeClosed() )
     {
         double currentFrame = glfwGetTime();
         window.deltaTime = currentFrame - window.lastFrame;
@@ -54,8 +55,6 @@ int main()
         glfwSwapBuffers(window.window);
         glfwPollEvents();
     }
-
-    glfwTerminate();
 
     return 0;
 }

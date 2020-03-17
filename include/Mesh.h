@@ -28,6 +28,8 @@ public:
     vector<Texture2D*> textures;
     unsigned int VAO;
 
+    Mesh() = default;
+
     Mesh(const vector<Vertex>& vert, const vector<unsigned int>& ind)
     {
         vertices = vert;
@@ -43,6 +45,15 @@ public:
     void addTexture(Texture2D* tex)
     {
         textures.emplace_back(tex);
+    }
+
+    /**
+     * Removes old textures, sets new (might be useful when 1 mesh is used in different places)
+     * @param tex
+     */
+    void setTextures(initializer_list<Texture2D *> tex)
+    {
+        textures = tex;
     }
 
     /**
