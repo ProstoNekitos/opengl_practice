@@ -58,7 +58,7 @@ public:
 
     /**
      * Set textures using uniform
-     * @param shader Textures destination
+     * @param shader textures destination
      */
     void render(Shader shader)
     {

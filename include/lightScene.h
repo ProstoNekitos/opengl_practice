@@ -27,14 +27,16 @@ public:
         sphere =  Mesh(sphereVertGen.toMesh(), sphereVertGen.getIndAsVector());
         sphere.addTexture(Resources::getTexture("sun"));
         centralSpherePos = glm::vec3(0, 0, 0);
+        Resources::loadMesh("ufo", "../resources/models/ufo.obj");
+
         setLights();
     }
 
     void loadTextures()
     {
-        Resources::loadTexture("../resources/textures/2k_sun_resized.png", "sun");
-        Resources::loadTexture("../resources/textures/2k_moon_resized.png", "moon");
-        Resources::loadTexture("../resources/textures/2k_earth_nightmap_resized.png", "planet");
+        Resources::loadTexture("sun", "../resources/textures/2k_sun_resized.png");
+        Resources::loadTexture("moon", "../resources/textures/2k_moon_resized.png");
+        Resources::loadTexture("planet", "../resources/textures/2k_earth_nightmap_resized.png");
     }
 
     void loadShaders()
@@ -253,7 +255,7 @@ public:
             sphere.render(shader);
         }
 
-        /*//On planet objects
+        //On planet objects
         {
             model = glm::mat4(1.0f);
             model = glm::translate( model, centralSpherePos );
@@ -276,8 +278,8 @@ public:
             shader.setMat4("projection", projection);
             shader.setMat4("view", view);
 
-            sphere.render(shader);
-        }*/
+            Resources::getMesh("ufo").render(shader);
+        }
 
         //Skybox
         {
@@ -294,6 +296,8 @@ public:
     }
 
     Mesh sphere;
+    Mesh something;
+
 
     std::vector<Light*> lights;
 
