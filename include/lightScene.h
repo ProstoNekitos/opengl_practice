@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Sphere.h"
 #include "Light.h"
+#include "Terrain.h"
 
 class LightScene : public Scene{
 public:
@@ -28,6 +29,10 @@ public:
         sphere.addTexture(Resources::getTexture("sun"));
         centralSpherePos = glm::vec3(0, 0, 0);
         Resources::loadMesh("ufo", "../resources/models/ufo.obj");
+        auto a = Resources::getTexture("moon");
+        terrain.setTextures({&a});
+
+
 
         setLights();
     }
@@ -281,6 +286,22 @@ public:
             Resources::getMesh("ufo").render(shader);
         }
 
+        //Terrain
+        {
+            model = glm::mat4(1.0f);
+            model = glm::translate( model, centralSpherePos );
+
+            //model = glm::translate( model, {0,-2,0});
+            //model = glm::scale(model, glm::vec3(2,2,2));
+
+            shader.use();
+            shader.setMat4("model", model);
+            shader.setMat4("projection", projection);
+            shader.setMat4("view", view);
+
+            terrain.render(shader);
+        }
+
         //Skybox
         {
             shader = Resources::getShader("skybox");
@@ -298,6 +319,7 @@ public:
     Mesh sphere;
     Mesh something;
 
+    Terrain terrain;
 
     std::vector<Light*> lights;
 

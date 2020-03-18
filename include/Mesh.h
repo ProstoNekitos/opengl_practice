@@ -17,8 +17,8 @@ struct Vertex {
     glm::vec3 Position;
     glm::vec3 Normal;
     glm::vec2 TexCoords;
-    glm::vec3 Tangent;
-    glm::vec3 Bitangent;
+    glm::vec3 Tangent{};
+    glm::vec3 Bitangent{};
 };
 
 class Mesh {
@@ -26,7 +26,7 @@ public:
     vector<Vertex> vertices;
     vector<unsigned int> indices;
     vector<Texture2D*> textures;
-    unsigned int VAO;
+    unsigned int VAO{};
 
     Mesh() = default;
 
@@ -108,8 +108,8 @@ public:
         glDeleteBuffers(1, &EBO);
     }
 
-private:
-    unsigned int VBO, EBO;
+protected:
+    unsigned int VBO{}, EBO{};
 
     /**
      * Setup VAO, VBO & EBO
