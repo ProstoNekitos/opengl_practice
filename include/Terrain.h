@@ -1,6 +1,8 @@
 #ifndef UNTITLED_TERRAIN_H
 #define UNTITLED_TERRAIN_H
 
+#include "Shader.h"
+
 class Terrain
 {
 public:
@@ -10,7 +12,8 @@ public:
 
     void setup();
 
-    void render();
+    void render(Shader shader);
+
 private:
     unsigned int width; ///< In vert number
     unsigned int height; ///< In vert number
