@@ -8,7 +8,7 @@
 
 class LightScene : public Scene{
 public:
-    explicit LightScene(const Sphere& sph = Sphere())
+    explicit LightScene(const Sphere& sph = Sphere()) : terrain(8,10,40)
     {
         skybox.setTexture(CubeMesh::loadCubemap({
             "../resources/textures/skybox/right.png",
@@ -30,9 +30,7 @@ public:
         centralSpherePos = glm::vec3(0, 0, 0);
         Resources::loadMesh("ufo", "../resources/models/ufo.obj");
         auto a = Resources::getTexture("moon");
-        terrain.setTextures({&a});
-
-
+        /*terrain.setTextures({&a});*/
 
         setLights();
     }
@@ -292,7 +290,7 @@ public:
             model = glm::translate( model, centralSpherePos );
 
             //model = glm::translate( model, {0,-2,0});
-            //model = glm::scale(model, glm::vec3(2,2,2));
+            //model = glm::scale(model, glm::vec3(10,10,10));
 
             shader.use();
             shader.setMat4("model", model);

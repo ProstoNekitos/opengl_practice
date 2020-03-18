@@ -10,8 +10,8 @@
 class Terrain : public Mesh
 {
 public:
-    Terrain(unsigned int w = 5, unsigned int h = 5, unsigned int ofset = 15)
-    : width(w), height(h), offset(ofset)
+    Terrain(unsigned int w = 30, unsigned int h = 30, unsigned int ts = 15)
+    : width(w), height(h), tileSize(ts)
     {
         generateIndices();
         heightMap = generateHeightMap();
@@ -21,21 +21,29 @@ public:
 
     void HeightMapFromFile(const char* file);
 
-    float** generateHeightMap(int seed = 1337)
+    float** generateHeightMap(int seed = 2424123)
     {
         FastNoise noise(seed);
         noise.SetNoiseType(FastNoise::Perlin);
-        float** nm = new float*[width];
-        for(size_t x = 0; x < width; ++x)
+        noise.SetFrequency(2);
+
+        float fw = static_cast<float>(width)*tileSize;
+        float fh = static_cast<float>(height)*tileSize;
+
+        size_t nmW = width * tileSize;
+        size_t nmH = height * tileSize;
+
+        float** nm = new float*[nmW];
+        for(size_t x = 0; x < nmW; ++x)
         {
-            nm[x] = new float[height];
-            for(size_t y = 0; y < height; ++y)
+            nm[x] = new float[nmH];
+            for(size_t y = 0; y < nmH; ++y)
             {
-                double nx = x/width - 0.5;
-                double ny = y/height - 0.5;
-                nm[x][y] = noise.GetNoise(x, y) /*+
+                double nx = x/fw - 0.5;
+                double ny = y/fh - 0.5;
+                nm[x][y] = noise.GetNoise(nx, ny) +
                         0.5 * noise.GetNoise(2 * nx, 2 * ny) +
-                        0.25 * noise.GetNoise( 2* nx, 2 * ny)*/;
+                        0.25 * noise.GetNoise( 2* nx, 2 * ny);
                 std::cout << nm[x][y] << ' ';
             }
         }
@@ -71,15 +79,22 @@ public:
 
     void generateVertices()
     {
-        for(size_t i = 0; i < width; ++i){
-            for(size_t j = 0; j < height; ++j)
+        float fwidth  = static_cast<float>(width);
+        float fheight  = static_cast<float>(height);
+
+        for(int i = 0; i < width; ++i)
+        {
+            for(int j = 0; j < height; ++j)
             {
                 vertices.emplace_back(
-                        glm::vec3((width/2 - i)/width, heightMap[i][j], (height/2 - j)/height),
+                        glm::vec3((fwidth/2.f - i)/fwidth, heightMap[i][j], (fheight/2.f - j)/fheight),
                         glm::vec3(0,0,0 ),
-                        glm::vec2( i/width, j/height ));
+                        glm::vec2( i/fwidth, j/fheight ));
+
+                std::cout << fwidth/2.f - i << ' ' << fheight/2.f - j << '\n';
             }
         }
+
         std::cout << '\n' << vertices.size() << '\n';
     }
 
@@ -111,7 +126,7 @@ private:
     unsigned int scale = 1;
 
     float** heightMap = nullptr; ///< Do we really need to store it?
-    float offset = 15; ///<between verts
+    float tileSize = 15; ///<between verts
 
     float seaLvl; ///< Idk where to use it except for coloring
 };
