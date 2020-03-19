@@ -8,7 +8,7 @@
 
 class LightScene : public Scene{
 public:
-    explicit LightScene(const Sphere& sph = Sphere()) : terrain(8,10,40)
+    explicit LightScene(const Sphere& sph = Sphere()) : terrain(15,4,40)
     {
         skybox.setTexture(CubeMesh::loadCubemap({
             "../resources/textures/skybox/right.png",
@@ -186,7 +186,7 @@ public:
 
         applyLights(shader, camera);
 
-        //Star
+        /*//Star
         {
             model = glm::mat4(1.0f);
             model = glm::translate(model, centralSpherePos);
@@ -202,7 +202,7 @@ public:
             sphere.setTextures({&tex});
 
             sphere.render(shader);
-        }
+        }*/
 
         //Planet
         {
@@ -287,7 +287,7 @@ public:
         //Terrain
         {
             model = glm::mat4(1.0f);
-            model = glm::translate( model, centralSpherePos );
+            //model = glm::translate( model, centralSpherePos );
 
             //model = glm::translate( model, {0,-2,0});
             //model = glm::scale(model, glm::vec3(10,10,10));

@@ -12,11 +12,12 @@
 using namespace std;
 
 struct Vertex {
+    Vertex() = default;
     Vertex(const glm::vec3& pos, const glm::vec3& norm, const glm::vec2& tcord)
     : Position(pos), Normal(norm), TexCoords(tcord){}
-    glm::vec3 Position;
-    glm::vec3 Normal;
-    glm::vec2 TexCoords;
+    glm::vec3 Position{};
+    glm::vec3 Normal{};
+    glm::vec2 TexCoords{};
     glm::vec3 Tangent{};
     glm::vec3 Bitangent{};
 };

@@ -1290,3 +1290,21 @@ glm/glm.hpp
 glm/gtc/matrix_transform.hpp
 -
 
+/home/nolv/Workspace/scene/src/Resources.cpp
+Resources.h
+/home/nolv/Workspace/scene/src/Resources.h
+iostream
+-
+sstream
+-
+fstream
+-
+stb_image.h
+-
+
+/home/nolv/Workspace/scene/src/Sphere.cpp
+cmath
+-
+Sphere.h
+/home/nolv/Workspace/scene/src/Sphere.h
+

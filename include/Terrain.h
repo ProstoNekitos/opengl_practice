@@ -13,9 +13,9 @@ public:
     Terrain(unsigned int w = 30, unsigned int h = 30, unsigned int ts = 15)
     : width(w), height(h), tileSize(ts)
     {
-        generateIndices();
         heightMap = generateHeightMap();
         generateVertices();
+        generateIndices();
         setup();
     }
 
@@ -30,8 +30,8 @@ public:
         float fw = static_cast<float>(width)*tileSize;
         float fh = static_cast<float>(height)*tileSize;
 
-        size_t nmW = width * tileSize;
-        size_t nmH = height * tileSize;
+        size_t nmW = (width + 1) * tileSize;
+        size_t nmH = (height + 1) * tileSize;
 
         float** nm = new float*[nmW];
         for(size_t x = 0; x < nmW; ++x)
@@ -44,7 +44,6 @@ public:
                 nm[x][y] = noise.GetNoise(nx, ny) +
                         0.5 * noise.GetNoise(2 * nx, 2 * ny) +
                         0.25 * noise.GetNoise( 2* nx, 2 * ny);
-                std::cout << nm[x][y] << ' ';
             }
         }
         return nm;
@@ -61,41 +60,60 @@ public:
     void generateIndices()
     {
         unsigned int vertexCount = width * height;
-        for (unsigned int i = 0; i < vertexCount - width; i++)  ///< except for the last row
+
+        for(unsigned int row = 0; row < height - 1; ++row)
         {
-            if( (i + 1) % width == 0 && i )
-                continue;
+            for(unsigned int col = 0; col < width - 1; ++col)
+            {
+                unsigned topLeft = row * width + col;
+                unsigned topRight = topLeft + 1;
+                unsigned bottomLeft = (row + 1) * width + col;
+                unsigned bottomRight = bottomLeft + 1;
+                indices.insert(indices.end(),
+                        {
+                                topLeft,
+                                bottomLeft,
+                                bottomRight
+                        });
 
-            unsigned int topLeft = i;
-            unsigned int topRight = topLeft + 1;
-            unsigned int bottomLeft = i + width;
-            unsigned int bottomRight = bottomLeft + 1;
-
-            indices.insert(indices.end(), {topLeft, bottomLeft, bottomRight}); ///< First triangle
-            indices.insert(indices.end(), {topLeft, topRight, bottomRight}); ///< Second triangle
+                indices.insert(indices.end(),
+                        {
+                                topLeft,
+                                topRight,
+                                bottomRight
+                        });
+            }
         }
         std::cout << "Place for your breakpoint\n";
     }
 
+    /** The most simple way
+   *  0---1---2
+   *  |   |   |
+   *  |   |   |
+   *  |   |   |
+   *  3---4---5
+   */
     void generateVertices()
     {
-        float fwidth  = static_cast<float>(width);
-        float fheight  = static_cast<float>(height);
+        auto fwidth  = static_cast<float>(width);
+        auto fheight  = static_cast<float>(height);
 
-        for(int i = 0; i < width; ++i)
+        size_t num = 0;
+
+        for(int j = 0; j < height; ++j)
         {
-            for(int j = 0; j < height; ++j)
+            for(int i = 0; i < width; ++i)
             {
                 vertices.emplace_back(
-                        glm::vec3((fwidth/2.f - i)/fwidth, heightMap[i][j], (fheight/2.f - j)/fheight),
+                        glm::vec3((fwidth/2.f - i)/fwidth, heightMap[i*tileSize][j*tileSize], (fheight/2.f - j)/fheight),
                         glm::vec3(0,0,0 ),
                         glm::vec2( i/fwidth, j/fheight ));
 
-                std::cout << fwidth/2.f - i << ' ' << fheight/2.f - j << '\n';
+                std::cout << num++ << ' ' << (fwidth/2.f - i)/fwidth << ' ' << (fheight/2.f - j)/fheight << '\n';
             }
+            std::cout << '\n';
         }
-
-        std::cout << '\n' << vertices.size() << '\n';
     }
 
     void setWidth()
@@ -108,7 +126,7 @@ public:
 
     }
 
-    void setOffset()
+    void setTileSize()
     {}
 
     ~Terrain(){
@@ -126,7 +144,7 @@ private:
     unsigned int scale = 1;
 
     float** heightMap = nullptr; ///< Do we really need to store it?
-    float tileSize = 15; ///<between verts
+    int tileSize = 15; ///<between verts
 
     float seaLvl; ///< Idk where to use it except for coloring
 };
