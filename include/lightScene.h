@@ -8,7 +8,7 @@
 
 class LightScene : public Scene{
 public:
-    explicit LightScene(const Sphere& sph = Sphere()) : terrain(15,4,40)
+    explicit LightScene(const Sphere& sph = Sphere()) : terrain(100,100,15)
     {
         skybox.setTexture(CubeMesh::loadCubemap({
             "../resources/textures/skybox/right.png",
@@ -182,7 +182,7 @@ public:
         double planet_x = sin( glm::radians(glfwGetTime() * planetOrbitSpeed) );
 
         dynamic_cast<SpotLight*>(lights[2])->position = {planet_x * planetOrbit + planetRad + 0.5, 0, planet_y * planetOrbit + planetRad + 0.5};
-        dynamic_cast<SpotLight*>(lights[2])->direction = {planet_x * planetOrbit, 0, planet_y * planetOrbit};
+        dynamic_cast<SpotLight*>(lights[2])->direction = {planet_x, 0, planet_y};
 
         applyLights(shader, camera);
 
@@ -290,7 +290,7 @@ public:
             //model = glm::translate( model, centralSpherePos );
 
             //model = glm::translate( model, {0,-2,0});
-            //model = glm::scale(model, glm::vec3(10,10,10));
+            model = glm::scale(model, glm::vec3(5,5,5));
 
             shader.use();
             shader.setMat4("model", model);
@@ -315,7 +315,6 @@ public:
     }
 
     Mesh sphere;
-    Mesh something;
 
     Terrain terrain;
 

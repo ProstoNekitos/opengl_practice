@@ -21,17 +21,26 @@ public:
 
     void HeightMapFromFile(const char* file);
 
-    float** generateHeightMap(int seed = 2424123)
+
+    /**
+     * TODO: change this lib; 3 n^2 loop are terrifying
+     * @param seed
+     * @return
+     */
+    float** generateHeightMap(int seed = std::rand())
     {
-        FastNoise noise(seed);
+        clearHeightMap();
+        FastNoise noise;
         noise.SetNoiseType(FastNoise::Perlin);
-        noise.SetFrequency(2);
+        noise.SetFrequency(.5);
+        noise.SetSeed(rand());
 
         float fw = static_cast<float>(width)*tileSize;
         float fh = static_cast<float>(height)*tileSize;
 
         size_t nmW = (width + 1) * tileSize;
         size_t nmH = (height + 1) * tileSize;
+
 
         float** nm = new float*[nmW];
         for(size_t x = 0; x < nmW; ++x)
@@ -41,9 +50,58 @@ public:
             {
                 double nx = x/fw - 0.5;
                 double ny = y/fh - 0.5;
-                nm[x][y] = noise.GetNoise(nx, ny) +
-                        0.5 * noise.GetNoise(2 * nx, 2 * ny) +
-                        0.25 * noise.GetNoise( 2* nx, 2 * ny);
+                nm[x][y] = noise.GetNoise(nx, ny);
+            }
+        }
+
+        //Big waves
+        noise.SetFrequency(2);
+        for(size_t x = 0; x < nmW; ++x)
+        {
+            for(size_t y = 0; y < nmH; ++y)
+            {
+                double nx = x/fw - 0.5;
+                double ny = y/fh - 0.5;
+
+                nm[x][y] += 0.5 * noise.GetNoise(nx, ny);
+            }
+        }
+
+        //medium bumps
+        noise.SetFrequency(4);
+        for(size_t x = 0; x < nmW; ++x)
+        {
+            for(size_t y = 0; y < nmH; ++y)
+            {
+                double nx = x/fw - 0.5;
+                double ny = y/fh - 0.5;
+
+                nm[x][y] += 0.15 * noise.GetNoise(nx, ny);
+            }
+        }
+
+        //little bumps
+        noise.SetFrequency(16);
+        for(size_t x = 0; x < nmW; ++x)
+        {
+            for(size_t y = 0; y < nmH; ++y)
+            {
+                double nx = x/fw - 0.5;
+                double ny = y/fh - 0.5;
+
+                nm[x][y] += 0.04 * noise.GetNoise(nx, ny);
+            }
+        }
+
+        for(size_t x = 0; x < nmW; ++x)
+        {
+            for(size_t y = 0; y < nmH; ++y)
+            {
+                double nx = x/fw - 0.5;
+                double ny = y/fh - 0.5;
+
+                nm[x][y] +=  .002;//std::pow(nm[x][y], 1.0000001);
+                std::cout << nm[x][y] << ' ';
             }
         }
         return nm;
@@ -89,9 +147,9 @@ public:
 
     /** The most simple way
    *  0---1---2
-   *  |   |   |
-   *  |   |   |
-   *  |   |   |
+   *  |       |
+   *  |       |
+   *  |       |
    *  3---4---5
    */
     void generateVertices()
@@ -129,12 +187,16 @@ public:
     void setTileSize()
     {}
 
-    ~Terrain(){
+    void clearHeightMap(){
         for(size_t i = 0; i < width; ++i)
         {
             delete[] heightMap[i];
         }
         delete[] heightMap;
+    }
+
+    ~Terrain(){
+        clearHeightMap();
     }
 
 private:
