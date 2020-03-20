@@ -6,9 +6,15 @@
 
 /**
  * TODO
- * Maybe it is better to set color right here, not in shader
  * Refactor vertices generator (we can generate 1/4 of them, then just flip 2 times)
  */
+
+struct ColorVertex{
+    ColorVertex(Vertex v, glm::vec3 col)
+    : vert(v), color(col){}
+    Vertex vert;
+    glm::vec3 color;
+};
 
 /**
  * Might a bad idea to inherit from Mesh
@@ -16,7 +22,7 @@
 class Terrain
 {
 public:
-    Terrain(unsigned int w = 30, unsigned int h = 30, unsigned int ts = 15)
+    explicit Terrain(unsigned int w = 30, unsigned int h = 30, unsigned int ts = 15)
     : width(w), height(h), tileSize(ts)
     {
         generateEverything();
@@ -194,13 +200,14 @@ public:
             for(int i = 0; i < width; ++i)
             {
                 vertices.emplace_back(
-                        glm::vec3((fwidth/2.f - i)/fwidth, heightMap[i*tileSize][j*tileSize], (fheight/2.f - j)/fheight),
-                        glm::vec3(0,0,0 ),
-                        glm::vec2( i/fwidth, j/fheight ));
+                    Vertex(glm::vec3((fwidth/2.f - i)/fwidth, heightMap[i*tileSize][j*tileSize], (fheight/2.f - j)/fheight),
+                           glm::vec3(0,0,0 ),
+                           glm::vec2( i/fwidth, j/fheight )),
+                    determineColor(heightMap[i*tileSize][j*tileSize])
+                );
             }
         }
     }
-
 
     void clearHeightMap(){
         if( heightMap )
@@ -211,60 +218,99 @@ public:
         }
     }
 
-
-    //Setters
-    void setWidth(unsigned w)
-    {
-        width = w;
-        generateEverything();
-    }
-
-    void setHeight(unsigned h)
-    {
-        height = h;
-        generateEverything();
-    }
-
-    void setTileSize(unsigned ts)
-    {
-        tileSize = ts;
-    }
-
-
     /**
- * Set textures using uniform
- * @param shader textures destination
- */
-    void render(Shader shader)
+     * Set textures using uniform
+     * @param shader textures destination
+     */
+    void render()
     {
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
-
-        glBindVertexArray(0);
-        glActiveTexture(GL_TEXTURE0);
     }
+
+    void terminate(){
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteBuffers(1, &VBO);
+        glDeleteBuffers(1, &EBO);
+    }
+
 public:
-    vector<Vertex> vertices;
+
+    //Rendering
+    vector<ColorVertex> vertices;
     vector<unsigned int> indices;
     unsigned int VAO{};
 
-public:
     //Coloring
     float maxHeight = -1;
     float minHeight = 1;
 
 private:
 
-    unsigned int VBO{}, EBO{};
+    void setup()
+    {
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+        glGenBuffers(1, &EBO);
+
+        glBindVertexArray(VAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(ColorVertex), &vertices[0], GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
+        //Position
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ColorVertex), (void*)offsetof(ColorVertex, vert));
+
+        //Normal
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(ColorVertex), (void*)offsetof(ColorVertex, vert) );
+
+        //Texture coordinates
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(ColorVertex), (void*)(offsetof(ColorVertex, vert) + offsetof(Vertex, Normal)));
+
+        //Tangent
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(ColorVertex), (void*)(offsetof(ColorVertex, vert) + offsetof(Vertex, Tangent)));
+
+        //Bitangent
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(ColorVertex), (void*)(offsetof(ColorVertex, vert) + offsetof(Vertex, Bitangent)));
+
+        //Colors
+        glEnableVertexAttribArray(5);
+        glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(ColorVertex), (void*)offsetof(ColorVertex, color));
+
+        glBindVertexArray(0);
+    }
+
+    glm::vec3 determineColor(const float& h)
+    {
+        glm::vec3 color;
+        if( h > 0.8 ) //snow
+            color = glm::vec3(255./255,255./255,255./255);
+        else
+            if( h > 0.3 ) //mountain
+                color = glm::vec3(38./255,36./255,36./255);
+            else
+                if( h > 0 ) //green
+                    color = glm::vec3(8./255,140./255,0./255);
+                else
+                    color = glm::vec3(249.f/255,206./255,164./255);
+        return color;
+    }
 
     unsigned int width; ///< In vert number
     unsigned int height; ///< In vert number
-    unsigned int scale = 1;
+
+    unsigned int VBO{}, EBO{};
 
     float** heightMap = nullptr; ///< Do we really need to store it?
     unsigned tileSize = 15; ///<between verts
-
-    std::map<float, glm::vec3> lvlColor;
 };
 
 #endif

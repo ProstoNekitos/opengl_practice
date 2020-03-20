@@ -6,8 +6,6 @@ struct DirLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-
-    bool enabled;
 };
 
 struct PointLight {
@@ -20,8 +18,6 @@ struct PointLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-
-    bool enabled;
 };
 
 struct SpotLight {
@@ -38,13 +34,12 @@ struct SpotLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-
-    bool enabled;
 };
 
 in vec3 FragPos;
 in vec3 Normal;
-in vec2 TexCoords;
+in vec2 TexCoord;
+in vec3 VertColor;
 
 uniform vec3 viewPos;
 
@@ -64,11 +59,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 color);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 color);
 
-vec3 determineColor();
-
 void main()
 {
-    vec3 color = determineColor();
+    vec3 color = VertColor;
 
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
@@ -78,7 +71,7 @@ void main()
     //If no lights, texture doesn't differ
     if( (plNum + dirNum + spotNum) != 0 )
     {
-        vec3 result = vec3(0);
+        vec3 result = VertColor;
 
         //Point lights
         for( int i = 0; i < plNum; ++i )
@@ -114,21 +107,6 @@ vec3 CalcEnvRefl(samplerCube skybox, vec3 normal, vec3 viewDir, vec3 position)
 
     return specular;
 }*/
-
-vec3 determineColor()
-{
-    vec3 color;
-    if( FragPos.y > snowPerc )
-        color = snowColor;
-    if( FragPos.y < snowPerc && FragPos.y > mountainPerc  )
-        color = mountainColor;
-    if( FragPos.y < mountainPerc && FragPos.y > greenPerc  )
-        color = greenColor;
-    if( FragPos.y < greenPerc )
-        color = vec3(238, 214,175);
-
-    return color;
-}
 
 // calculates the color when using a directional light.
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 color)

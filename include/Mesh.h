@@ -43,11 +43,6 @@ public:
         textures.emplace_back(&tex);
     }
 
-    void addTexture(Texture2D* tex)
-    {
-        textures.emplace_back(tex);
-    }
-
     /**
      * Removes old textures, sets new (might be useful when 1 mesh is used in different places)
      * @param tex
