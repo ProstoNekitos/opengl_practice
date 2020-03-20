@@ -8,7 +8,7 @@
 
 class LightScene : public Scene{
 public:
-    explicit LightScene(const Sphere& sph = Sphere()) : terrain(100,100,15)
+    explicit LightScene(const Sphere& sph = Sphere()) : terrain(40,40,15)
     {
         skybox.setTexture(CubeMesh::loadCubemap({
             "../resources/textures/skybox/right.png",
@@ -23,29 +23,32 @@ public:
 
         loadTextures();
         loadShaders();
+        loadModels();
 
         Sphere sphereVertGen;
         sphere =  Mesh(sphereVertGen.toMesh(), sphereVertGen.getIndAsVector());
         sphere.addTexture(Resources::getTexture("sun"));
         centralSpherePos = glm::vec3(0, 0, 0);
-        Resources::loadMesh("ufo", "../resources/models/ufo.obj");
-        auto a = Resources::getTexture("moon");
-        /*terrain.setTextures({&a});*/
 
         setLights();
     }
 
-    void loadTextures()
+    void loadTextures() override
     {
         Resources::loadTexture("sun", "../resources/textures/2k_sun_resized.png");
         Resources::loadTexture("moon", "../resources/textures/2k_moon_resized.png");
         Resources::loadTexture("planet", "../resources/textures/2k_earth_nightmap_resized.png");
     }
 
-    void loadShaders()
+    void loadShaders() override
     {
         Resources::loadShader("default", "../resources/shaders/default.vert", "../resources/shaders/default.frag");
         Resources::loadShader("skybox", "../resources/shaders/skybox.vert", "../resources/shaders/skybox.frag");
+        Resources::loadShader("terrain", "../resources/shaders/terrain.vert", "../resources/shaders/terrain.frag");
+    }
+
+    void loadModels() override {
+        Resources::loadMesh("ufo", "../resources/models/ufo.obj");
     }
 
     void setLights()
@@ -286,16 +289,20 @@ public:
 
         //Terrain
         {
+            Shader terrainShader = Resources::getShader("terrain");
+
             model = glm::mat4(1.0f);
             //model = glm::translate( model, centralSpherePos );
 
             //model = glm::translate( model, {0,-2,0});
-            model = glm::scale(model, glm::vec3(5,5,5));
+            model = glm::scale(model, glm::vec3(5));
 
-            shader.use();
-            shader.setMat4("model", model);
-            shader.setMat4("projection", projection);
-            shader.setMat4("view", view);
+            terrainShader.use();
+
+            //Position
+            terrainShader.setMat4("model", model);
+            terrainShader.setMat4("projection", projection);
+            terrainShader.setMat4("view", view);
 
             terrain.render(shader);
         }

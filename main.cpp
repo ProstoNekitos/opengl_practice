@@ -14,7 +14,6 @@
  * Model (mesh group)
  * Group (model group)
  * The fuck 2do with shadows
- * Model load lib
  * Default path for resources (do we need it?)
  */
 

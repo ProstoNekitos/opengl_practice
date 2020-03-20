@@ -15,16 +15,34 @@ public:
     virtual void addObject(){};
     virtual void render(Camera cam, glm::mat4 projection){};
 
+    /**
+     * Default resource loading function. TODO: might be a good idea to put it in constructor
+     */
+    virtual void loadResources(){
+        loadShaders();
+        loadTextures();
+        loadModels();
+    }
+
+    ///< Scene-specific functions (we don't need to store dick model in lego duplo scene (for example))
+    virtual void loadShaders(){};
+    virtual void loadTextures(){};
+    virtual void loadModels(){};
+
     void terminate()
     {
         for(auto& a : meshes)
         {
             a.terminate();
         }
-
+        Resources::clear();
         skybox.terminate();
     }
 
+    virtual ~Scene()
+    {
+        terminate();
+    }
     //virtual void sceneCallback(); //might be useful for specific (per scene) input
 
     std::vector<Mesh> meshes;
