@@ -8,7 +8,6 @@
 #include <random>
 #include <iterator>
 
-
 template<typename Iter, typename RandomGenerator>
 Iter select_randomly(Iter start, Iter end, RandomGenerator& g) {
     std::uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
@@ -36,6 +35,21 @@ struct ColorVertex{
     glm::vec3 color;
 };
 
+struct ZoneColor
+{
+    float bottomLine; ///< Zone bottom line
+    glm::vec3 baseColor; ///< Base zone color
+    std::vector<glm::vec3> horizontalMixColors; ///< Horizontal color shift
+    glm::vec3 mixHorizontalColor()
+    {
+        std::random_device rd; //TODO make generator static
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<> dis(0.0, 1.0);
+        float alpha = dis(gen);
+        return baseColor * alpha + (1 - alpha) * (*select_randomly(horizontalMixColors.begin(), horizontalMixColors.end()));
+    }
+};
+
 /**
  * Might a bad idea to inherit from Mesh
  */
@@ -44,13 +58,35 @@ class Terrain
 public:
     explicit Terrain(unsigned int w = 30, unsigned int h = 30, unsigned int ts = 15)
     : width(w), height(h), tileSize(ts),
-    lvlColorMap({
-        {0.8, std::vector<glm::vec3>({{255,255,255}, {239,250,255}, {225,245,246}, {210,234,249}, {190,232,253}})}, //Snow
-        {0.3, std::vector<glm::vec3>({{0,0,0}, {65,71,74}, {54,46,28}, {12,14,13}})}, //Mountain
-        {0, std::vector<glm::vec3>({{0,128,0}, {0,100,0}, {34,139,34}, {50,205,50}})}, //Green
-        {-1, std::vector<glm::vec3>({{204,159,41}, {201,168,79}, {255,197,46}, {246,179,1}, {240,220,166}})}  //Water (sand)
+    colors{
+            {//snow
+                0.8,
+                {255,255,255}, //white
+                {{126, 249, 255},
+                 {115,194,251},
+                 {176, 223,229},
+                 {149, 200, 216}}
+            },
+            {//mountain
+                    0.3,
+                    {255,255,255},
+                    {{181,170,157},
+                            {65,71,74},
+                            {0,0,0},
+                            {129,132,125}}
+            },
+            {//greenZone
+                    -0.3,
+                    {255,255,255},
+                    {{126, 249, 255}}
+            },
+            {//underWater
+                    -1,
+                    {255,255,255},
+                    {{126, 249, 255}}
+            }
 
-    })
+    }
     {
         generateEverything();
         setup();
@@ -67,7 +103,10 @@ public:
         generateIndices();
     }
 
-    void HeightMapFromFile(const char* file){};
+    void HeightMapFromFile(const char* file)
+    {
+
+    };
 
     /**
      * Adds bumps to height map
@@ -131,7 +170,7 @@ public:
             }
         }
 
-        addBumps(1, 0.5, nm); //Waves
+        addBumps(1, 0.2, nm); //Waves
         addBumps(4, 0.15, nm); //Medium bumps
         addBumps(16, 0.05, nm); //Little bumps
 
@@ -263,6 +302,7 @@ public:
     //Rendering
     vector<ColorVertex> vertices;
     vector<unsigned int> indices;
+
 private:
 
     void setup()
@@ -318,6 +358,8 @@ private:
     }
 
     std::vector< std::pair<float, std::vector<glm::vec3> > > lvlColorMap;
+
+    std::vector<ZoneColor> colors;
 
     unsigned int width; ///< In vert number
     unsigned int height; ///< In vert number

@@ -8,7 +8,7 @@
 
 class LightScene : public Scene{
 public:
-    explicit LightScene(const Sphere& sph = Sphere()) : terrain(200,200,15)
+    explicit LightScene(const Sphere& sph = Sphere()) : terrain(40,40,15)
     {
         skybox.setTexture(CubeMesh::loadCubemap({
             "../resources/textures/skybox/right.png",
