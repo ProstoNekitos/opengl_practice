@@ -4,6 +4,26 @@
 #include "Mesh.h"
 #include "FastNoise.h"
 
+//Needs only for random color selection
+#include <random>
+#include <iterator>
+
+
+template<typename Iter, typename RandomGenerator>
+Iter select_randomly(Iter start, Iter end, RandomGenerator& g) {
+    std::uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
+    std::advance(start, dis(g));
+    return start;
+}
+
+template<typename Iter>
+Iter select_randomly(Iter start, Iter end) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    return select_randomly(start, end, gen);
+}
+
+
 /**
  * TODO
  * Refactor vertices generator (we can generate 1/4 of them, then just flip 2 times)
@@ -23,7 +43,14 @@ class Terrain
 {
 public:
     explicit Terrain(unsigned int w = 30, unsigned int h = 30, unsigned int ts = 15)
-    : width(w), height(h), tileSize(ts)
+    : width(w), height(h), tileSize(ts),
+    lvlColorMap({
+        {0.8, std::vector<glm::vec3>({{255,255,255}, {239,250,255}, {225,245,246}, {210,234,249}, {190,232,253}})}, //Snow
+        {0.3, std::vector<glm::vec3>({{0,0,0}, {65,71,74}, {54,46,28}, {12,14,13}})}, //Mountain
+        {0, std::vector<glm::vec3>({{0,128,0}, {0,100,0}, {34,139,34}, {50,205,50}})}, //Green
+        {-1, std::vector<glm::vec3>({{204,159,41}, {201,168,79}, {255,197,46}, {246,179,1}, {240,220,166}})}  //Water (sand)
+
+    })
     {
         generateEverything();
         setup();
@@ -76,7 +103,7 @@ public:
      * @param seed
      * @return
      */
-    [[nodiscard]] float** generateHeightMap(int seed = 1337)
+    [[nodiscard]] float** generateHeightMap(int seed = 3242123)
     {
         clearHeightMap();
 
@@ -104,7 +131,7 @@ public:
             }
         }
 
-        addBumps(2, 0.5, nm); //Waves
+        addBumps(1, 0.5, nm); //Waves
         addBumps(4, 0.15, nm); //Medium bumps
         addBumps(16, 0.05, nm); //Little bumps
 
@@ -121,16 +148,13 @@ public:
             }
         }*/
 
-        //Get max & min height, normalize (if >1 then 1, if <(-1) then -1)
+        //Normalize (if >1 then 1, if <(-1) then -1)
         for(size_t x = 0; x < nmW; ++x)
         {
             for(size_t y = 0; y < nmH; ++y)
             {
                 if( nm[x][y] < -1 ) nm[x][y] = -1;
                 if( nm[x][y] > 1 ) nm[x][y] = 1;
-
-                if( nm[x][y] > maxHeight ) maxHeight = nm[x][y];
-                if( nm[x][y] < minHeight ) minHeight = nm[x][y];
             }
         }
 
@@ -239,12 +263,6 @@ public:
     //Rendering
     vector<ColorVertex> vertices;
     vector<unsigned int> indices;
-    unsigned int VAO{};
-
-    //Coloring
-    float maxHeight = -1;
-    float minHeight = 1;
-
 private:
 
     void setup()
@@ -290,24 +308,21 @@ private:
 
     glm::vec3 determineColor(const float& h)
     {
-        glm::vec3 color;
-        if( h > 0.8 ) //snow
-            color = glm::vec3(255./255,255./255,255./255);
-        else
-            if( h > 0.3 ) //mountain
-                color = glm::vec3(38./255,36./255,36./255);
-            else
-                if( h > 0 ) //green
-                    color = glm::vec3(8./255,140./255,0./255);
-                else
-                    color = glm::vec3(249.f/255,206./255,164./255);
-        return color;
+        for(auto& lvl : lvlColorMap)
+            if( h > lvl.first )
+            {
+                auto col = *select_randomly(lvl.second.begin(), lvl.second.end());
+                return {col.x / 255, col.y / 255, col.z / 255};
+            }
+        return {6,6,6};
     }
+
+    std::vector< std::pair<float, std::vector<glm::vec3> > > lvlColorMap;
 
     unsigned int width; ///< In vert number
     unsigned int height; ///< In vert number
 
-    unsigned int VBO{}, EBO{};
+    unsigned int VBO{}, EBO{}, VAO{};
 
     float** heightMap = nullptr; ///< Do we really need to store it?
     unsigned tileSize = 15; ///<between verts

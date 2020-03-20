@@ -39,7 +39,7 @@ struct SpotLight {
 in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoord;
-in vec3 VertColor;
+flat in vec3 VertColor;
 
 uniform vec3 viewPos;
 

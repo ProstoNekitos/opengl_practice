@@ -7,7 +7,7 @@ layout (location = 5) in vec3 inVertColor;
 out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoord;
-out vec3 VertColor;
+flat out vec3 VertColor;
 
 uniform mat4 model;
 uniform mat4 view;
