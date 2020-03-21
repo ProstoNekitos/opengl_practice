@@ -40,6 +40,9 @@ struct ZoneColor
     float bottomLine; ///< Zone bottom line
     glm::vec3 baseColor; ///< Base zone color
     std::vector<glm::vec3> horizontalMixColors; ///< Horizontal color shift
+    float minAlpha;
+
+
     glm::vec3 mixHorizontalColor()
     {
         std::random_device rd; //TODO make generator static
@@ -47,6 +50,11 @@ struct ZoneColor
         std::uniform_real_distribution<> dis(0.0, 1.0);
         float alpha = dis(gen);
         return baseColor * alpha + (1 - alpha) * (*select_randomly(horizontalMixColors.begin(), horizontalMixColors.end()));
+    }
+
+    static glm::vec3 fc(glm::vec3 col)
+    {
+        return {col.x/255, col.y/255, col.z/255};
     }
 };
 
@@ -62,28 +70,47 @@ public:
             {//snow
                 0.8,
                 {255,255,255}, //white
-                {{126, 249, 255},
-                 {115,194,251},
-                 {176, 223,229},
-                 {149, 200, 216}}
+                    std::vector<glm::vec3>{
+                    {126, 249, 255},
+                    {115,194,251},
+                    {176, 223,229},
+                    {149, 200, 216}
+                },
+                 0.3
             },
             {//mountain
                     0.3,
-                    {255,255,255},
-                    {{181,170,157},
-                            {65,71,74},
-                            {0,0,0},
-                            {129,132,125}}
+                    {110,116,120}, //Rockish
+                    std::vector<glm::vec3>{
+                        {181,170,157},
+                        {65,71,74},
+                        {0,0,0},
+                        {129,132,125}
+                    },
+                    0.3
             },
             {//greenZone
                     -0.3,
-                    {255,255,255},
-                    {{126, 249, 255}}
+                    {43,85,19},
+                    std::vector<glm::vec3>{
+                        {39,70,12},
+                        {55,89,11},
+                        {134,178,74},
+                        {54,143,0},
+                     },
+                    0.1
             },
             {//underWater
                     -1,
-                    {255,255,255},
-                    {{126, 249, 255}}
+                    {246,228,173},
+                    std::vector<glm::vec3>{
+                        {126, 249, 255},
+                        {250,242,195},
+                        {135,224,255},
+                        {246,218,99},
+                        {254,255,189}
+                    },
+                    0.2
             }
 
     }
@@ -346,14 +373,47 @@ private:
         glBindVertexArray(0);
     }
 
+    /**
+     * Determine which color will be in fragment according to zone
+     * Color is determined by Parabola equation, where current height stands for x, and alpha for y
+     * y = x^2 + minimumAlpha
+     * y - alpha, x - height
+     * @param h Vertex height
+     * @return Colour on that height
+     */
     glm::vec3 determineColor(const float& h)
     {
-        for(auto& lvl : lvlColorMap)
-            if( h > lvl.first )
-            {
-                auto col = *select_randomly(lvl.second.begin(), lvl.second.end());
-                return {col.x / 255, col.y / 255, col.z / 255};
-            }
+        for( size_t i = 0; i < colors.size(); ++i )
+        {
+            if( h < colors[i].bottomLine )
+                continue;
+
+            float zoneCenter;
+            float alpha;
+            glm::vec3 color;
+
+            if( !i )
+                zoneCenter = 1;
+            else
+                if( i == colors.size() - 1 )
+                    zoneCenter = -1;
+                else
+                    zoneCenter = (colors[i-1].bottomLine - colors[i].bottomLine)/2;
+
+            alpha = std::pow(zoneCenter - h, 6) + colors[i].minAlpha;
+
+            std::cout << "Height: " << h << " Alpha: " << alpha << '\n';
+
+            if( h > zoneCenter )
+                color = ZoneColor::fc((1.0f-alpha) * colors[i].mixHorizontalColor() + alpha * colors[i-1].mixHorizontalColor());
+            else
+                if( h < zoneCenter)
+                    color = ZoneColor::fc((1.0f-alpha) * colors[i].mixHorizontalColor() + alpha * colors[i+1].mixHorizontalColor());
+                else
+                    color = ZoneColor::fc(colors[i].mixHorizontalColor());
+
+            return color;
+        }
         return {6,6,6};
     }
 
