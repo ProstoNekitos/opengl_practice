@@ -15,6 +15,8 @@
  * Group (model group)
  * The fuck 2do with shadows
  * Default path for resources (do we need it?)
+ * Fix terrain generators
+ * Make water great again
  */
 
 int main()

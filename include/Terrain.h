@@ -112,7 +112,6 @@ public:
                     },
                     0.2
             }
-
     }
     {
         generateEverything();
@@ -128,6 +127,7 @@ public:
         heightMap = generateHeightMap();
         generateVertices();
         generateIndices();
+        addWater();
     }
 
     void HeightMapFromFile(const char* file)
@@ -308,6 +308,46 @@ public:
         }
     }
 
+    void addWater()
+    {
+        unsigned size = vertices.size();
+        float h = (colors.end()-2)->bottomLine;
+        float x = vertices.front().vert.Position.x;
+        float z = vertices.front().vert.Position.z;
+        glm::vec3 col = glm::vec3(81./255., 158./255., 173./255.);
+
+        vertices.emplace_back(
+                Vertex(glm::vec3(x, h, z),
+                       glm::vec3(0,0,0 ),
+                       glm::vec2( -1, -1)),
+                       col);
+
+        vertices.emplace_back(
+                Vertex(glm::vec3(-x, h, z),
+                       glm::vec3(0,0,0 ),
+                       glm::vec2( -1, 1)),
+                col);
+
+        vertices.emplace_back(
+                Vertex(glm::vec3(-x, h, -z),
+                       glm::vec3(0,0,0 ),
+                       glm::vec2( 1, 1)),
+                col);
+
+        vertices.emplace_back(
+                Vertex(glm::vec3(x, h, -z),
+                       glm::vec3(0,0,0 ),
+                       glm::vec2( 1, -1)),
+                col);
+
+
+        indices.insert(indices.end(), {
+            size, size + 1, size + 2,
+            size, size + 3, size + 2
+        });
+
+    }
+
     /**
      * Set textures using uniform
      * @param shader textures destination
@@ -401,8 +441,6 @@ private:
                     zoneCenter = (colors[i-1].bottomLine - colors[i].bottomLine)/2;
 
             alpha = std::pow(zoneCenter - h, 6) + colors[i].minAlpha;
-
-            std::cout << "Height: " << h << " Alpha: " << alpha << '\n';
 
             if( h > zoneCenter )
                 color = ZoneColor::fc((1.0f-alpha) * colors[i].mixHorizontalColor() + alpha * colors[i-1].mixHorizontalColor());
