@@ -49,7 +49,7 @@ struct ZoneColor
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> dis(0.0, 1.0);
         float alpha = dis(gen);
-        return baseColor * alpha + (1 - alpha) * (*select_randomly(horizontalMixColors.begin(), horizontalMixColors.end()));
+        return baseColor * (1 - alpha) + alpha * (*select_randomly(horizontalMixColors.begin(), horizontalMixColors.end()));
     }
 
     static glm::vec3 fc(glm::vec3 col)
@@ -193,13 +193,13 @@ public:
     {
         indices.clear();
 
-        for(unsigned int row = 0; row < height - 1; ++row)
+        for(unsigned int row = 0; row < height; ++row)
         {
-            for(unsigned int col = 0; col < width - 1; ++col)
+            for(unsigned int col = 0; col < width; ++col)
             {
-                unsigned topLeft = row * width + col;
+                unsigned topLeft = row * (width+1) + col;
                 unsigned topRight = topLeft + 1;
-                unsigned bottomLeft = (row + 1) * width + col;
+                unsigned bottomLeft = topLeft + (width+1);
                 unsigned bottomRight = bottomLeft + 1;
                 indices.insert(indices.end(),
                         {
@@ -216,7 +216,6 @@ public:
                         });
             }
         }
-        std::cout << "Place for your breakpoint\n";
     }
 
     /**
@@ -234,17 +233,17 @@ public:
         auto fwidth  = static_cast<float>(width);
         auto fheight  = static_cast<float>(height);
 
-        for(int j = 0; j < height; ++j)
+        for(int j = 0; j <= height; ++j)
         {
-            for(int i = 0; i < width; ++i)
+            for(int i = 0; i <= width; ++i)
             {
                 vertices.emplace_back(
-                    Vertex(glm::vec3((fwidth/2.f - i)/fwidth, heightMap[i*tileSize][j*tileSize], (fheight/2.f - j)/fheight),
+                    Vertex(glm::vec3(1 - (2.f * i)/fwidth, heightMap[i*tileSize][j*tileSize], 1 - (2.f * j)/fheight),
                            glm::vec3(0,0,0 ),
                            glm::vec2( i/fwidth, j/fheight )),
                     determineColor(heightMap[i*tileSize][j*tileSize])
+
                 );
-                std::cout << (fwidth/2.f - i)/fwidth << ' ' << (fheight/2.f - j)/fheight << '\n';
             }
         }
     }
@@ -262,8 +261,8 @@ public:
     {
         unsigned size = vertices.size();
         float h = (colors.end()-2)->bottomLine;
-        float x = vertices.front().vert.Position.x;
-        float z = vertices.front().vert.Position.z;
+        float x = 1;
+        float z = 1;
         glm::vec3 col = glm::vec3(81./255., 158./255., 173./255.);
 
         vertices.emplace_back(
@@ -295,7 +294,6 @@ public:
             size, size + 1, size + 2,
             size, size + 3, size + 2
         });
-
     }
 
     void render()
@@ -311,7 +309,6 @@ public:
     }
 
 public:
-
     //Rendering
     vector<ColorVertex> vertices;
     vector<unsigned int> indices;
@@ -403,13 +400,13 @@ private:
 
     std::vector<ZoneColor> colors;
 
-    unsigned int width; ///< In vert number
-    unsigned int height; ///< In vert number
+    unsigned int width; ///< in tiles
+    unsigned int height; ///< in tiles
 
     unsigned int VBO{}, EBO{}, VAO{};
 
     float** heightMap = nullptr; ///< Do we really need to store it?
-    unsigned tileSize = 15; ///<between verts
+    unsigned tileSize = 15; ///< between verts
 };
 
 #endif
