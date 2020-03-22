@@ -66,7 +66,8 @@ class Terrain
 public:
     explicit Terrain(unsigned int w = 30, unsigned int h = 30, unsigned int ts = 15)
     : width(w), height(h), tileSize(ts),
-    colors{
+    colors
+    {
             {//snow
                 0.8,
                 {255,255,255}, //white
@@ -135,37 +136,9 @@ public:
 
     };
 
-    /**
-     * Adds bumps to height map
-     * @param frequency in Hz probably
-     * @param impact how strong (tall) bumps would be
-     */
-    void addBumps(float frequency, float impact, float** hm)
-    {
-        FastNoise noise;
-        noise.SetNoiseType(FastNoise::Simplex);
-        noise.SetFrequency(frequency);
-
-        float fw = static_cast<float>(width)*static_cast<float>(tileSize);
-        float fh = static_cast<float>(height)*static_cast<float>(tileSize);
-        size_t nmW = (width + 1) * tileSize;
-        size_t nmH = (height + 1) * tileSize;
-
-        for(size_t x = 0; x < nmW; ++x)
-        {
-            for(size_t y = 0; y < nmH; ++y)
-            {
-                double nx = x/fw - 0.5;
-                double ny = y/fh - 0.5;
-
-                hm[x][y] += impact * noise.GetNoise(nx, ny);
-            }
-        }
-    }
 
     /**
      * Clears lod heightMap and generates new;
-     * TODO: change this lib; 3 n^2 loop are terrifying
      * @param seed
      * @return
      */
@@ -174,9 +147,12 @@ public:
         clearHeightMap();
 
         FastNoise noise;
-        noise.SetNoiseType(FastNoise::Simplex);
-        noise.SetFrequency(.5);
         noise.SetSeed(seed);
+        noise.SetFractalOctaves(12);
+        noise.SetNoiseType(FastNoise::SimplexFractal);
+        noise.SetFrequency(.3);
+        noise.SetFractalLacunarity(2);
+        noise.SetFractalGain(0.5);
 
         float fw = static_cast<float>(width)*static_cast<float>(tileSize);
         float fh = static_cast<float>(height)*static_cast<float>(tileSize);
@@ -194,31 +170,7 @@ public:
                 double nx = x/fw - 0.5;
                 double ny = y/fh - 0.5;
                 nm[x][y] = noise.GetNoise(nx, ny);
-            }
-        }
 
-        addBumps(1, 0.2, nm); //Waves
-        addBumps(4, 0.15, nm); //Medium bumps
-        addBumps(16, 0.05, nm); //Little bumps
-
-        /*There lies an exponent function which somehow chews my terrain
-         * for(size_t x = 0; x < nmW; ++x)
-        {
-            for(size_t y = 0; y < nmH; ++y)
-            {
-                double nx = x/fw - 0.5;
-                double ny = y/fh - 0.5;
-
-                nm[x][y] += ;//std::pow(nm[x][y], 1.0000001);
-                std::cout << nm[x][y] << ' ';
-            }
-        }*/
-
-        //Normalize (if >1 then 1, if <(-1) then -1)
-        for(size_t x = 0; x < nmW; ++x)
-        {
-            for(size_t y = 0; y < nmH; ++y)
-            {
                 if( nm[x][y] < -1 ) nm[x][y] = -1;
                 if( nm[x][y] > 1 ) nm[x][y] = 1;
             }
@@ -240,7 +192,6 @@ public:
     void generateIndices()
     {
         indices.clear();
-        unsigned int vertexCount = width * height;
 
         for(unsigned int row = 0; row < height - 1; ++row)
         {
@@ -283,8 +234,6 @@ public:
         auto fwidth  = static_cast<float>(width);
         auto fheight  = static_cast<float>(height);
 
-        size_t num = 0;
-
         for(int j = 0; j < height; ++j)
         {
             for(int i = 0; i < width; ++i)
@@ -295,6 +244,7 @@ public:
                            glm::vec2( i/fwidth, j/fheight )),
                     determineColor(heightMap[i*tileSize][j*tileSize])
                 );
+                std::cout << (fwidth/2.f - i)/fwidth << ' ' << (fheight/2.f - j)/fheight << '\n';
             }
         }
     }
@@ -348,10 +298,6 @@ public:
 
     }
 
-    /**
-     * Set textures using uniform
-     * @param shader textures destination
-     */
     void render()
     {
         glBindVertexArray(VAO);
@@ -454,8 +400,6 @@ private:
         }
         return {6,6,6};
     }
-
-    std::vector< std::pair<float, std::vector<glm::vec3> > > lvlColorMap;
 
     std::vector<ZoneColor> colors;
 
