@@ -31,6 +31,7 @@ public:
     static Texture2D getTexture(const std::string& name);
 
     static Mesh loadMesh(const std::string &name, const char *file);
+    static Mesh loadMesh(const std::string &name, Mesh mesh);
     static Mesh getMesh(const std::string& name);
 
     static void clear();

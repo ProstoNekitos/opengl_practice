@@ -15,6 +15,7 @@
  * Default path for resources (do we need it?)
  * Fix terrain generators
  * Make water great again
+ * Make camera одной инстанцией на весь проект, я забыл как оно называется
  */
 
 int main()
@@ -26,16 +27,6 @@ int main()
     window.setMouseCallback(Window::mouse_callback);
     window.setFBCallback(Window::framebuffer_size_callback);
     window.setScrollCallback(Window::scroll_callback);
-
-    //OpenGL global settings
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-    //glEnable(GL_CULL_FACE); ///< TODO optimize indices generation
 
     glm::mat4 projection = glm::perspective(glm::radians(window.camera.Zoom), (float)window.width / (float)window.height, 0.1f, 100.0f);
 
@@ -49,7 +40,7 @@ int main()
 
         window.processInput();
 
-        scene1.render(window.camera, projection);
+        scene1.update(window.camera, projection, window.width, window.height);
 
         glfwSwapBuffers(window.window);
         glfwPollEvents();

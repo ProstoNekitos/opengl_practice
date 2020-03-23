@@ -20,5 +20,5 @@ find_library(GLFW
         NAMES libglfw3.a
         HINTS lib)
 
-add_executable(${PROJECT_NAME} main.cpp ${SRC} ${THIRDPARTY})
+add_executable(${PROJECT_NAME} main.cpp ${SRC} ${THIRDPARTY} include/Water.h)
 target_link_libraries(${PROJECT_NAME} ${GLEW} ${GLFW} -ldl -lgtest -pthread -lassimp)

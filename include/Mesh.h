@@ -87,10 +87,10 @@ public:
                     name = "texture_height";
                     break;
             }
-
             glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
             textures[i]->bind();
         }
+
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
 

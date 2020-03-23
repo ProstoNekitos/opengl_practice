@@ -40,7 +40,7 @@ struct ZoneColor
     float bottomLine; ///< Zone bottom line
     glm::vec3 baseColor; ///< Base zone color
     std::vector<glm::vec3> horizontalMixColors; ///< Horizontal color shift
-    float minAlpha;
+    float betweenLvlAlpha;
 
 
     glm::vec3 mixHorizontalColor()
@@ -128,7 +128,7 @@ public:
         heightMap = generateHeightMap();
         generateVertices();
         generateIndices();
-        addWater();
+        //addWater();
     }
 
     void HeightMapFromFile(const char* file)
@@ -142,7 +142,7 @@ public:
      * @param seed
      * @return
      */
-    [[nodiscard]] float** generateHeightMap(int seed = 3242123)
+    [[nodiscard]] float** generateHeightMap(int seed = 3245432)
     {
         clearHeightMap();
 
@@ -211,8 +211,9 @@ public:
                 indices.insert(indices.end(),
                         {
                                 topLeft,
-                                topRight,
-                                bottomRight
+                                bottomRight,
+                                topRight
+
                         });
             }
         }
@@ -291,7 +292,7 @@ public:
 
 
         indices.insert(indices.end(), {
-            size, size + 1, size + 2,
+            size, size + 2, size + 1,
             size, size + 3, size + 2
         });
     }
@@ -312,9 +313,9 @@ public:
     //Rendering
     vector<ColorVertex> vertices;
     vector<unsigned int> indices;
+    std::vector<ZoneColor> colors;
 
 private:
-
     void setup()
     {
         glGenVertexArrays(1, &VAO);
@@ -383,7 +384,7 @@ private:
                 else
                     zoneCenter = (colors[i-1].bottomLine - colors[i].bottomLine)/2;
 
-            alpha = std::pow(zoneCenter - h, 6) + colors[i].minAlpha;
+            alpha = std::pow(zoneCenter - h, 6) + colors[i].betweenLvlAlpha;
 
             if( h > zoneCenter )
                 color = ZoneColor::fc((1.0f-alpha) * colors[i].mixHorizontalColor() + alpha * colors[i-1].mixHorizontalColor());
@@ -398,8 +399,6 @@ private:
         return {6,6,6};
     }
 
-    std::vector<ZoneColor> colors;
-
     unsigned int width; ///< in tiles
     unsigned int height; ///< in tiles
 
@@ -407,6 +406,10 @@ private:
 
     float** heightMap = nullptr; ///< Do we really need to store it?
     unsigned tileSize = 15; ///< between verts
+
+    /**
+     * TODO: add vector of water lvls for this terrain
+     */
 };
 
 #endif

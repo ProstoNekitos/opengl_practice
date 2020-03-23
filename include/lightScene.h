@@ -4,7 +4,9 @@
 #include "Scene.h"
 #include "Sphere.h"
 #include "Light.h"
+
 #include "Terrain.h"
+#include "Water.h"
 
 class LightScene : public Scene{
 public:
@@ -45,10 +47,35 @@ public:
         Resources::loadShader("default", "../resources/shaders/default.vert", "../resources/shaders/default.frag");
         Resources::loadShader("skybox", "../resources/shaders/skybox.vert", "../resources/shaders/skybox.frag");
         Resources::loadShader("terrain", "../resources/shaders/terrain.vert", "../resources/shaders/terrain.frag");
+        Resources::loadShader("water", "../resources/shaders/water.vert", "../resources/shaders/water.frag");
+
     }
 
     void loadModels() override {
         Resources::loadMesh("ufo", "../resources/models/ufo.obj");
+
+        float h = (terrain.colors.end()-2)->bottomLine;
+
+        Mesh water({
+            {glm::vec3(1, h, 1),
+            glm::vec3(0,1,0),
+            glm::vec2( 1, 1)},
+
+            {glm::vec3(-1, h, 1),
+             glm::vec3(0,1,0 ),
+             glm::vec2( -1, 1)},
+
+            {glm::vec3(-1, h, -1),
+            glm::vec3(0,1,0 ),
+            glm::vec2( -1, -1)},
+
+            {glm::vec3(1, h, -1),
+            glm::vec3(0,1,0 ),
+            glm::vec2( 1, -1)}
+            },
+        {0, 2, 1, 0, 3, 2});
+
+        Resources::loadMesh("water", water);
     }
 
     void setLights()
@@ -167,12 +194,75 @@ public:
         shader.setInt("spotNum", spotNum);
     }
 
+    //TODO: ;Shitcode cause currently is needed only not to call render recursevely
+    // But not that bad idea to separate update and render functions
+    void update(Camera& camera, glm::mat4 projection, unsigned w, unsigned h)
+    {
+        //Reflection
+            //Move camera under water
+            float multWater = (terrain.colors.end()-2)->bottomLine * 14; //14 is terrain multiplier
+
+            float dist = 2 * ( camera.Position.y - multWater );
+            camera.Position -= glm::vec3(0, dist, 0);
+            camera.Pitch *= -1;
+            camera.updateCameraVectors();
+
+            //Render "under" water to reflection
+            glEnable(GL_CLIP_DISTANCE0);
+            clippingPlane = glm::vec4(0, 1, 0, -multWater);
+            refl.bindReflection();
+            render(camera, projection);
+
+            //Move cam back
+            camera.Position += glm::vec3(0, dist, 0);
+            camera.Pitch *= -1;
+            camera.updateCameraVectors();
+
+        //Refraction
+            clippingPlane = glm::vec4(0, -1, 0, multWater);
+            refl.bindRefraction();
+            render(camera, projection);
+
+            //Default render
+            glDisable(GL_CLIP_DISTANCE0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glViewport(0, 0, w, h);
+            render(camera, projection);
+
+        //Render water
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::scale(model, glm::vec3(14));
+
+            Shader waterShader = Resources::getShader("water");
+            waterShader.use();
+            waterShader.setMat4("model", model);
+            waterShader.setMat4("projection", projection);
+            waterShader.setMat4("view", camera.GetViewMatrix());
+
+            //Bind textures
+            glActiveTexture(GL_TEXTURE0);
+            waterShader.setInt("reflection", 0);
+            glBindTexture( GL_TEXTURE_2D, refl.getReflectionTexture() );
+
+            glActiveTexture(GL_TEXTURE1);
+            waterShader.setInt("refraction", 1);
+            glBindTexture(GL_TEXTURE_2D, refl.getRefractionTexture());
+
+            Resources::getMesh("water").render(waterShader);
+    }
+
     void render(Camera camera, glm::mat4 projection) override {
 
         Shader shader = Resources::getShader("default");
+        shader.use();
+        shader.setVec4("plane", clippingPlane);
+
+        Shader terrainShader = Resources::getShader("terrain");
+        terrainShader.use();
+        terrainShader.setVec4("plane", clippingPlane);
 
         glEnable(GL_DEPTH_TEST);
-        glDisable(GL_STENCIL_TEST);
+        //glEnable(GL_CULL_FACE);
 
         glClearColor(0.1, 0.1, 0.1, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -188,24 +278,6 @@ public:
         dynamic_cast<SpotLight*>(lights[2])->direction = {planet_x, 0, planet_y};
 
         applyLights(shader, camera);
-
-        /*//Star
-        {
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, centralSpherePos);
-
-            model = glm::scale(model, glm::vec3(starRad, starRad, starRad));
-
-            shader.use();
-            shader.setMat4("model", model);
-            shader.setMat4("projection", projection);
-            shader.setMat4("view", view);
-
-            auto tex = Resources::getTexture("sun");
-            sphere.setTextures({&tex});
-
-            sphere.render(shader);
-        }*/
 
         //Planet
         {
@@ -289,8 +361,6 @@ public:
 
         //Terrain
         {
-            Shader terrainShader = Resources::getShader("terrain");
-
             model = glm::mat4(1.0f);
             model = glm::scale(model, glm::vec3(14));
 
@@ -321,10 +391,11 @@ public:
     Mesh sphere;
 
     Terrain terrain;
+    Reflections refl;
 
     std::vector<Light*> lights;
 
-    float starRad = 1;
+    glm::vec4 clippingPlane; //for reflections
 
     float planetRad = 0.5;
     float planetOrbit = 5;
@@ -333,10 +404,6 @@ public:
     float moonOrbit = 1;
     float moonRad = 0.2;
     float moonSpeed = 3;
-
-    float baseOrbit = 7;
-    float baseOrbitSpeed = 1;
-    float baseSize = 1;
 
     glm::vec3 ufoPos;
 

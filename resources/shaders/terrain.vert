@@ -13,15 +13,18 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+//Reflections
+uniform vec4 plane;
+
 void main()
 {
     FragPos = vec3(model * vec4(inPosition, 1.0));
     Normal = mat3(transpose(inverse(model))) * inNormal;
-
-    gl_Position = projection * view * vec4(FragPos, 1.0);
-
     TexCoord = inTexCoord;
     VertColor = inVertColor;
+
+    gl_ClipDistance[0] = dot(model * vec4(inPosition, 1.0), plane);
+    gl_Position = projection * view * vec4(FragPos, 1.0);
 }
 
 

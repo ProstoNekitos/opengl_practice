@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <utility>
 
 #include <stb_image.h>
 
@@ -10,44 +11,17 @@ std::map<std::string, Texture2D>    Resources::textures;
 std::map<std::string, Shader>       Resources::shaders;
 std::map<std::string, Mesh>         Resources::meshes;
 
+
+//Shaders
 Shader Resources::loadShader(const std::string &name, const char *vShaderFile, const char *fShaderFile, const char *gShaderFile)
 {
     shaders[name] = loadShaderFromFile(vShaderFile, fShaderFile, gShaderFile);
     return shaders[name];
 }
 
-Texture2D Resources::loadTexture(const std::string &name, const char *file, LOADTEXAS channels)
-{
-    textures[name] = loadTextureFromFile(file, channels);
-    return textures[name];
-}
-
-Mesh Resources::loadMesh(const std::string &name, const char *file) {
-    meshes[name] = loadMeshFromFile(file);
-    return meshes[name];
-}
-
 Shader Resources::getShader(const std::string& name)
 {
     return shaders[name];
-}
-
-Texture2D Resources::getTexture(const std::string& name)
-{
-    return textures[name];
-}
-
-Mesh Resources::getMesh(const std::string &name) {
-    return meshes[name];
-}
-
-void Resources::clear()
-{
-    for (auto& iter : shaders)
-        glDeleteProgram(iter.second.ID);
-
-    for (auto& iter : textures)
-        glDeleteTextures(1, &iter.second.ID);
 }
 
 Shader Resources::loadShaderFromFile(const char *vShaderFile, const char *fShaderFile, const char *gShaderFile)
@@ -92,6 +66,18 @@ Shader Resources::loadShaderFromFile(const char *vShaderFile, const char *fShade
     Shader shader;
     shader.compile(vShaderCode, fShaderCode, gShaderFile ? gShaderCode : nullptr);
     return shader;
+}
+
+//Textures
+Texture2D Resources::loadTexture(const std::string &name, const char *file, LOADTEXAS channels)
+{
+    textures[name] = loadTextureFromFile(file, channels);
+    return textures[name];
+}
+
+Texture2D Resources::getTexture(const std::string& name)
+{
+    return textures[name];
 }
 
 Texture2D Resources::loadTextureFromFile(const char *file, LOADTEXAS textureChannels)
@@ -149,6 +135,21 @@ Texture2D Resources::loadTextureFromFile(const char *file, LOADTEXAS textureChan
     return texture;
 }
 
+//Meshes
+Mesh Resources::loadMesh(const std::string &name, const char *file) {
+    meshes[name] = loadMeshFromFile(file);
+    return meshes[name];
+}
+
+Mesh Resources::loadMesh(const std::string &name, Mesh mesh) {
+    meshes[name] = std::move(mesh);
+    return meshes[name];
+}
+
+Mesh Resources::getMesh(const std::string &name) {
+    return meshes[name];
+}
+
 Mesh Resources::loadMeshFromFile(const char *file) {
     Assimp::Importer importer;
 
@@ -173,7 +174,7 @@ Mesh Resources::loadMeshFromFile(const char *file) {
                     {scene->mMeshes[i]->mVertices[v].x, scene->mMeshes[i]->mVertices[v].y, scene->mMeshes[i]->mVertices[v].z},
                     {scene->mMeshes[i]->mNormals[v].x, scene->mMeshes[i]->mNormals[v].y, scene->mMeshes[i]->mNormals[v].z},
                     {scene->mMeshes[i]->mTextureCoords[0][v].x,scene->mMeshes[i]->mTextureCoords[0][v].y})
-                    );
+            );
         }
 
         for( size_t v = 0; v < scene->mMeshes[i]->mNumFaces; ++v )
@@ -186,4 +187,14 @@ Mesh Resources::loadMeshFromFile(const char *file) {
     }
 
     return mehsVec[0];
+}
+
+//Util
+void Resources::clear()
+{
+    for (auto& iter : shaders)
+        glDeleteProgram(iter.second.ID);
+
+    for (auto& iter : textures)
+        glDeleteTextures(1, &iter.second.ID);
 }

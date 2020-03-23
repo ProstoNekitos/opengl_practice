@@ -97,7 +97,6 @@ public:
             if (Pitch < -89.0f)
                 Pitch = -89.0f;
         }
-
         updateCameraVectors();
     }
 
@@ -128,7 +127,6 @@ public:
     float MouseSensitivity;
     float Zoom;
 
-private:
     void updateCameraVectors()
     {
         glm::vec3 front;
