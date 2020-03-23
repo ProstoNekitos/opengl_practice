@@ -204,10 +204,10 @@ public:
 
             float dist = 2 * ( camera.Position.y - multWater );
             camera.Position -= glm::vec3(0, dist, 0);
-            camera.Pitch *= -1;
-            camera.updateCameraVectors();
+            camera.setPitch(camera.getPitch()*(-1));
 
-            //Render "under" water to reflection
+
+        //Render "under" water to reflection
             glEnable(GL_CLIP_DISTANCE0);
             clippingPlane = glm::vec4(0, 1, 0, -multWater);
             refl.bindReflection();
@@ -215,8 +215,7 @@ public:
 
             //Move cam back
             camera.Position += glm::vec3(0, dist, 0);
-            camera.Pitch *= -1;
-            camera.updateCameraVectors();
+            camera.setPitch(camera.getPitch()*(-1));
 
         //Refraction
             clippingPlane = glm::vec4(0, -1, 0, multWater);

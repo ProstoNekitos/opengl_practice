@@ -111,6 +111,27 @@ public:
             Zoom = 45.0f;
     }
 
+    //setters
+    void setYaw(double y){
+        Yaw = y;
+        updateCameraVectors();
+    }
+
+    void setPitch(double p){
+        Pitch = p;
+        updateCameraVectors();
+    }
+
+    double getPitch()
+    {
+        return Pitch;
+    }
+
+    double getYaw()
+    {
+        return Yaw;
+    }
+
     // Camera Attributes
     glm::vec3 Position;
     glm::vec3 Front;
@@ -118,14 +139,15 @@ public:
     glm::vec3 Right{};
     glm::vec3 WorldUp{};
 
-    // Euler Angles
-    double Yaw;
-    double Pitch;
-
     // Camera options
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom;
+
+private:
+    // Euler Angles
+    double Yaw;
+    double Pitch;
 
     void updateCameraVectors()
     {
